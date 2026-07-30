@@ -1,4 +1,4 @@
-import { useReducer, useMemo } from "react";
+import { useReducer, useMemo, useRef, useEffect } from "react";
 import "./App.css";
 import {
   day14Reducer,
@@ -10,6 +10,18 @@ type ContentRatio = "1:1" | "1:3" | "3:1";
 
 function App() {
   const [state, dispatch] = useReducer(day14Reducer, day14InitialState);
+  const stateLineRef = useRef<HTMLDivElement>(null);
+
+  // Focus management: restore focus to state-line if active control was removed
+  useEffect(() => {
+    const activeEl = document.activeElement as HTMLElement;
+    if (
+      activeEl === document.body ||
+      (activeEl && !activeEl.isConnected)
+    ) {
+      stateLineRef.current?.focus({ preventScroll: true });
+    }
+  }, [state]);
 
   // Dev-only fixture handling via query parameter
   const ratio = useMemo(() => {
@@ -344,6 +356,7 @@ function App() {
       </div>
 
       <div
+        ref={stateLineRef}
         className="state-line"
         data-testid="state-line"
         aria-live="polite"

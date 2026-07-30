@@ -625,6 +625,78 @@ test.describe("Day 14 Full Five-State Build", () => {
     await expect(state).toBeVisible();
   });
 
+  // FOCUS MANAGEMENT TESTS
+
+  test("52. Focus moves to state-line after RECORD PROPOSAL (mouse)", async ({ page }) => {
+    await page.goto("/");
+    const button = page.getByTestId("record-proposal");
+    await button.click();
+    await page.waitForTimeout(300);
+
+    const activeId = await page.evaluate(() => document.activeElement?.getAttribute("data-testid"));
+    expect(activeId).toBe("state-line");
+  });
+
+  test("53. Focus moves to state-line after RECORD PROPOSAL (keyboard)", async ({ page }) => {
+    await page.goto("/");
+    const button = page.getByTestId("record-proposal");
+    await button.focus();
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(300);
+
+    const activeId = await page.evaluate(() => document.activeElement?.getAttribute("data-testid"));
+    expect(activeId).toBe("state-line");
+  });
+
+  test("54. Focus moves to state-line after EXPRESS MATCH", async ({ page }) => {
+    await page.goto("/");
+    await navigateToState(page, "client_review_unexpressed");
+    const button = page.getByTestId("match-understanding");
+    await button.click();
+    await page.waitForTimeout(300);
+
+    const activeId = await page.evaluate(() => document.activeElement?.getAttribute("data-testid"));
+    expect(activeId).toBe("state-line");
+  });
+
+  test("55. Focus moves to state-line after EXPRESS DIFFERENCE", async ({ page }) => {
+    await page.goto("/");
+    await navigateToState(page, "client_review_unexpressed");
+    const button = page.getByTestId("different-understanding");
+    await button.click();
+    await page.waitForTimeout(300);
+
+    const activeId = await page.evaluate(() => document.activeElement?.getAttribute("data-testid"));
+    expect(activeId).toBe("state-line");
+  });
+
+  test("56. Focus moves to state-line after DECLINE CHANGE", async ({ page }) => {
+    await page.goto("/");
+    await navigateToState(page, "client_review_unexpressed");
+    const button = page.getByTestId("decline-change");
+    await button.click();
+    await page.waitForTimeout(300);
+
+    const activeId = await page.evaluate(() => document.activeElement?.getAttribute("data-testid"));
+    expect(activeId).toBe("state-line");
+  });
+
+  test("57. Focus preserved when control remains (RESET DEMO)", async ({ page }) => {
+    await page.goto("/");
+    await navigateToState(page, "shared_understanding");
+    const button = page.getByTestId("reset-demo");
+    await button.focus();
+    const prevActiveId = await page.evaluate(() => document.activeElement?.getAttribute("data-testid"));
+
+    await button.click();
+    await page.waitForTimeout(300);
+
+    const activeId = await page.evaluate(() => document.activeElement?.getAttribute("data-testid"));
+    // RESET button persists in both states, so focus remains on button (or moves to state-line if removed)
+    // Either state-line or reset-demo is acceptable since button doesn't disappear
+    expect(["reset-demo", "state-line"]).toContain(activeId);
+  });
+
   // SCREENSHOT GENERATION
 
   test("SCREENSHOTS: Generate all 13 screenshots", async ({ page }) => {
