@@ -10,8 +10,7 @@ export type Day14Event =
   | { type: "EXPRESS_MATCH" }
   | { type: "EXPRESS_DIFFERENCE" }
   | { type: "DECLINE_CHANGE" }
-  | { type: "RESET_DEMO" }
-  | { type: "JUMP_TO_STATE"; payload: Day14State };
+  | { type: "RESET_DEMO" };
 
 export type ContentRatio = "1:1" | "1:3" | "3:1";
 

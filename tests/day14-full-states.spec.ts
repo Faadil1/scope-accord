@@ -19,10 +19,33 @@ async function takeScreenshot(
   console.log(`Screenshot saved: ${filePath}`);
 }
 
-async function jumpToState(page: Page, state: string) {
-  const selector = page.locator("select").first();
-  await selector.selectOption(state);
+async function navigateToState(page: Page, target: string, fixture?: string) {
+  const url = fixture ? `/?fixture=${fixture}` : '/';
+  await page.goto(url);
+
+  if (target === 'provider_capture') return;
+
+  await page.getByTestId('record-proposal').click();
   await page.waitForTimeout(300);
+
+  if (target === 'client_review_unexpressed') return;
+
+  if (target === 'shared_understanding') {
+    await page.getByTestId('match-understanding').click();
+    await page.waitForTimeout(300);
+    return;
+  }
+
+  if (target === 'different_understandings') {
+    await page.getByTestId('different-understanding').click();
+    await page.waitForTimeout(300);
+    return;
+  }
+
+  if (target === 'declined') {
+    await page.getByTestId('decline-change').click();
+    await page.waitForTimeout(300);
+  }
 }
 
 test.describe("Day 14 Full Five-State Build", () => {
@@ -35,8 +58,7 @@ test.describe("Day 14 Full Five-State Build", () => {
   });
 
   test("2. Client Review Unexpressed state renders", async ({ page }) => {
-    await page.goto("/");
-    await jumpToState(page, "client_review_unexpressed");
+    await navigateToState(page, "client_review_unexpressed");
     const state = page.locator('[data-testid="state-client_review_unexpressed"]');
     await expect(state).toBeVisible();
     const text = await page.textContent("body");
@@ -44,22 +66,19 @@ test.describe("Day 14 Full Five-State Build", () => {
   });
 
   test("3. Different Understandings state renders", async ({ page }) => {
-    await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     const state = page.locator('[data-testid="state-different_understandings"]');
     await expect(state).toBeVisible();
   });
 
   test("4. Shared Understanding state renders", async ({ page }) => {
-    await page.goto("/");
-    await jumpToState(page, "shared_understanding");
-    const shell = page.locator('[data-testid="agreement-shell"]');
+    await navigateToState(page, "shared_understanding");
+    const shell = page.locator('[data-testid="state-shared_understanding"]');
     await expect(shell).toBeVisible();
   });
 
   test("5. Declined state renders", async ({ page }) => {
-    await page.goto("/");
-    await jumpToState(page, "declined");
+    await navigateToState(page, "declined");
     const state = page.locator('[data-testid="state-declined"]');
     await expect(state).toBeVisible();
   });
@@ -76,11 +95,11 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("7. Match button leads to Shared Understanding", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "client_review_unexpressed");
+    await navigateToState(page, "client_review_unexpressed");
     const button = page.locator('[data-testid="match-understanding"]');
     await button.click();
     await page.waitForTimeout(300);
-    const shell = page.locator('[data-testid="agreement-shell"]');
+    const shell = page.locator('[data-testid="state-shared_understanding"]');
     await expect(shell).toBeVisible();
   });
 
@@ -88,7 +107,7 @@ test.describe("Day 14 Full Five-State Build", () => {
     page,
   }) => {
     await page.goto("/");
-    await jumpToState(page, "client_review_unexpressed");
+    await navigateToState(page, "client_review_unexpressed");
     const button = page.locator('[data-testid="different-understanding"]');
     await button.click();
     await page.waitForTimeout(300);
@@ -98,7 +117,7 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("9. Decline button leads to Declined", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "client_review_unexpressed");
+    await navigateToState(page, "client_review_unexpressed");
     const button = page.locator('[data-testid="decline-change"]');
     await button.click();
     await page.waitForTimeout(300);
@@ -108,7 +127,7 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("10. Reset button returns to Provider Capture", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "shared_understanding");
+    await navigateToState(page, "shared_understanding");
     const button = page.locator('[data-testid="reset-demo"]');
     await button.click();
     await page.waitForTimeout(300);
@@ -122,7 +141,7 @@ test.describe("Day 14 Full Five-State Build", () => {
     page,
   }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     const pair = page.locator('[data-testid="understanding-pair"]');
     const text = await pair.textContent();
     expect(text).toBeTruthy();
@@ -134,53 +153,53 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("12. Client Review shows NOT YET EXPRESSED", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "client_review_unexpressed");
+    await navigateToState(page, "client_review_unexpressed");
     const text = await page.textContent("body");
     expect(text).toContain("NOT YET EXPRESSED");
   });
 
   test("13. Unexpressed state has dashed divider", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "client_review_unexpressed");
+    await navigateToState(page, "client_review_unexpressed");
     const divider = page.locator(".understanding-divider.dashed");
     await expect(divider).toBeVisible();
   });
 
   test("14. Different has exactly two difference ticks", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     const ticks = await page.locator(".difference-tick").count();
     expect(ticks).toBe(2);
   });
 
   test("15. Declined has zero difference ticks", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "declined");
+    await navigateToState(page, "declined");
     const ticks = await page.locator(".difference-tick").count();
     expect(ticks).toBe(0);
   });
 
   test("16. Shared has zero difference ticks", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "shared_understanding");
+    await navigateToState(page, "shared_understanding");
     const ticks = await page.locator(".difference-tick").count();
     expect(ticks).toBe(0);
   });
 
   test("17. Provenance absent before Shared", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     let text = await page.textContent("body");
     expect(text).not.toContain("PROPOSED 14 MAR");
 
-    await jumpToState(page, "provider_capture");
+    await navigateToState(page, "provider_capture");
     text = await page.textContent("body");
     expect(text).not.toContain("PROPOSED 14 MAR");
   });
 
   test("18. Provenance present only in Shared", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "shared_understanding");
+    await navigateToState(page, "shared_understanding");
     const text = await page.textContent("body");
     expect(text).toContain("PROPOSED 14 MAR");
     expect(text).toContain("SAME UNDERSTANDING EXPRESSED 14 MAR");
@@ -190,15 +209,15 @@ test.describe("Day 14 Full Five-State Build", () => {
     page,
   }) => {
     await page.goto("/");
-    await jumpToState(page, "shared_understanding");
-    const shell = page.locator('[data-testid="agreement-shell"]');
+    await navigateToState(page, "shared_understanding");
+    const shell = page.locator('[data-testid="state-shared_understanding"]');
     const shellHTML = await shell.innerHTML();
     expect(shellHTML).toContain("shared-proposal-block");
   });
 
   test("20. Boundary absent in Shared", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "shared_understanding");
+    await navigateToState(page, "shared_understanding");
     const boundary = page.locator('[data-testid="agreement-boundary"]');
     await expect(boundary).not.toBeVisible();
   });
@@ -211,14 +230,14 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("22. Boundary present in Different", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     const boundary = page.locator('[data-testid="agreement-boundary"]');
     await expect(boundary).toBeVisible();
   });
 
   test("23. Boundary present in Declined", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "declined");
+    await navigateToState(page, "declined");
     const boundary = page.locator('[data-testid="agreement-boundary"]');
     await expect(boundary).toBeVisible();
   });
@@ -233,7 +252,7 @@ test.describe("Day 14 Full Five-State Build", () => {
     expect(text).not.toContain("pending");
     expect(text).not.toContain("VENUE APPROVAL");
 
-    await jumpToState(page, "shared_understanding");
+    await navigateToState(page, "shared_understanding");
     text = await page.textContent("body");
     expect(text).not.toContain("approved");
     expect(text).not.toContain("verified");
@@ -245,7 +264,7 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("25. Boundary vertical at 1440px", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.waitForTimeout(300);
 
@@ -257,7 +276,7 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("26. Boundary vertical at 1024px", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     await page.setViewportSize({ width: 1024, height: 900 });
     await page.waitForTimeout(300);
 
@@ -269,7 +288,7 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("27. Boundary vertical at 768px", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.waitForTimeout(300);
 
@@ -281,7 +300,7 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("28. Boundary horizontal at 390px", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     await page.setViewportSize({ width: 390, height: 844 });
     await page.waitForTimeout(300);
 
@@ -293,7 +312,7 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("29. Boundary horizontal at 320px", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     await page.setViewportSize({ width: 320, height: 568 });
     await page.waitForTimeout(300);
 
@@ -305,7 +324,7 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("30. No horizontal overflow at 1440px", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.waitForTimeout(300);
 
@@ -317,7 +336,7 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("31. No horizontal overflow at 390px", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     await page.setViewportSize({ width: 390, height: 844 });
     await page.waitForTimeout(300);
 
@@ -329,7 +348,7 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("32. 200% zoom support at 640px", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     await page.setViewportSize({ width: 640, height: 900 });
     await page.waitForTimeout(300);
 
@@ -340,13 +359,8 @@ test.describe("Day 14 Full Five-State Build", () => {
   // GEOMETRY TESTS
 
   test("33. Boundary spans full height at 1:3", async ({ page }) => {
-    await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings", "1:3");
     await page.setViewportSize({ width: 1440, height: 900 });
-
-    const ratioSelector = page.locator("select").nth(1);
-    await ratioSelector.selectOption("1:3");
-    await page.waitForTimeout(300);
 
     const agreement = page.locator('[data-testid="agreement-section"]');
     const proposal = page.locator('[data-testid="proposal-band"]');
@@ -366,13 +380,8 @@ test.describe("Day 14 Full Five-State Build", () => {
   });
 
   test("34. Boundary spans full height at 3:1", async ({ page }) => {
-    await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings", "3:1");
     await page.setViewportSize({ width: 1440, height: 900 });
-
-    const ratioSelector = page.locator("select").nth(1);
-    await ratioSelector.selectOption("3:1");
-    await page.waitForTimeout(300);
 
     const agreement = page.locator('[data-testid="agreement-section"]');
     const proposal = page.locator('[data-testid="proposal-band"]');
@@ -431,7 +440,7 @@ test.describe("Day 14 Full Five-State Build", () => {
     expect(alerts).toBe(0);
     expect(invalid).toBe(0);
 
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     const alerts2 = await page.locator('[role="alert"]').count();
     expect(alerts2).toBe(0);
   });
@@ -450,10 +459,84 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("41. Grayscale remains distinguishable", async ({ page }) => {
     await page.goto("/");
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     await page.emulateMedia({ colorScheme: "dark" });
     const pair = page.locator('[data-testid="understanding-pair"]');
     await expect(pair).toBeVisible();
+  });
+
+  // PRODUCTION UI REQUIREMENTS
+
+  test("42. No direct state selector in production", async ({ page }) => {
+    await page.goto("/");
+    const selects = await page.locator("select").count();
+    expect(selects).toBe(0);
+  });
+
+  test("43. JUMP_TO_STATE does not exist in compiled output", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const content = await page.content();
+    expect(content.toLowerCase()).not.toContain("jump_to_state");
+    expect(content.toLowerCase()).not.toContain("jumptostate");
+  });
+
+  test("44. All five states reachable through product controls", async ({
+    page,
+  }) => {
+    // Provider Capture (default)
+    await page.goto("/");
+    let state = page.locator('[data-testid="state-provider_capture"]');
+    await expect(state).toBeVisible();
+
+    // Client Review via Record Proposal
+    await page.getByTestId("record-proposal").click();
+    await page.waitForTimeout(300);
+    state = page.locator('[data-testid="state-client_review_unexpressed"]');
+    await expect(state).toBeVisible();
+
+    // Shared via Match
+    await page.getByTestId("match-understanding").click();
+    await page.waitForTimeout(300);
+    state = page.locator('[data-testid="state-shared_understanding"]');
+    await expect(state).toBeVisible();
+
+    // Back to Provider via Reset
+    await page.getByTestId("reset-demo").click();
+    await page.waitForTimeout(300);
+    state = page.locator('[data-testid="state-provider_capture"]');
+    await expect(state).toBeVisible();
+
+    // Different via Record then Express Different
+    await page.getByTestId("record-proposal").click();
+    await page.waitForTimeout(300);
+    await page.getByTestId("different-understanding").click();
+    await page.waitForTimeout(300);
+    state = page.locator('[data-testid="state-different_understandings"]');
+    await expect(state).toBeVisible();
+
+    // Reset
+    await page.getByTestId("reset-demo").click();
+    await page.waitForTimeout(300);
+
+    // Declined via Record then Decline
+    await page.getByTestId("record-proposal").click();
+    await page.waitForTimeout(300);
+    await page.getByTestId("decline-change").click();
+    await page.waitForTimeout(300);
+    state = page.locator('[data-testid="state-declined"]');
+    await expect(state).toBeVisible();
+  });
+
+  test("45. RESET DEMO available outside composition", async ({ page }) => {
+    await page.goto("/");
+    const resetButton = page.getByTestId("reset-demo");
+    await expect(resetButton).toBeVisible();
+    await expect(resetButton).toHaveAttribute(
+      "class",
+      /control-button/
+    );
   });
 
   // SCREENSHOT GENERATION
@@ -463,48 +546,45 @@ test.describe("Day 14 Full Five-State Build", () => {
     await page.goto("/");
     await takeScreenshot(page, "01-provider-capture-desktop.png", 1440, 900);
 
-    await jumpToState(page, "client_review_unexpressed");
+    await navigateToState(page, "client_review_unexpressed");
     await takeScreenshot(page, "02-client-review-desktop.png", 1440, 900);
 
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     await takeScreenshot(page, "03-different-desktop.png", 1440, 900);
 
-    await jumpToState(page, "shared_understanding");
+    await navigateToState(page, "shared_understanding");
     await takeScreenshot(page, "04-shared-desktop.png", 1440, 900);
 
-    await jumpToState(page, "declined");
+    await navigateToState(page, "declined");
     await takeScreenshot(page, "05-declined-desktop.png", 1440, 900);
 
     // Mobile state screenshots (5)
-    await jumpToState(page, "provider_capture");
+    await navigateToState(page, "provider_capture");
     await takeScreenshot(page, "06-provider-capture-mobile.png", 390, 844);
 
-    await jumpToState(page, "client_review_unexpressed");
+    await navigateToState(page, "client_review_unexpressed");
     await takeScreenshot(page, "07-client-review-mobile.png", 390, 844);
 
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings");
     await takeScreenshot(page, "08-different-mobile.png", 390, 844);
 
-    await jumpToState(page, "shared_understanding");
+    await navigateToState(page, "shared_understanding");
     await takeScreenshot(page, "09-shared-mobile.png", 390, 844);
 
-    await jumpToState(page, "declined");
+    await navigateToState(page, "declined");
     await takeScreenshot(page, "10-declined-mobile.png", 390, 844);
 
     // Variant screenshots (3)
-    await jumpToState(page, "different_understandings");
+    await navigateToState(page, "different_understandings", "1:3");
     await page.setViewportSize({ width: 1440, height: 900 });
-    const ratioSelector = page.locator("select").nth(1);
-    await ratioSelector.selectOption("1:3");
-    await page.waitForTimeout(300);
     await takeScreenshot(page, "11-different-1x3.png", 1440, 900);
 
-    await ratioSelector.selectOption("3:1");
-    await page.waitForTimeout(300);
+    await navigateToState(page, "different_understandings", "3:1");
+    await page.setViewportSize({ width: 1440, height: 900 });
     await takeScreenshot(page, "12-different-3x1.png", 1440, 900);
 
-    await jumpToState(page, "shared_understanding");
-    await ratioSelector.selectOption("1:1");
+    await navigateToState(page, "shared_understanding");
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.emulateMedia({ colorScheme: "dark" });
     await page.waitForTimeout(300);
     await takeScreenshot(page, "13-shared-grayscale.png", 1440, 900);

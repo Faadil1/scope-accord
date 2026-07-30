@@ -3,11 +3,6 @@ import type { Day14State, Day14Event } from "./day14Types";
 export const day14InitialState: Day14State = "provider_capture";
 
 export function day14Reducer(state: Day14State, event: Day14Event): Day14State {
-  // Handle demo state jumps (for testing/development)
-  if (event.type === "JUMP_TO_STATE") {
-    return event.payload;
-  }
-
   switch (state) {
     case "provider_capture":
       if (event.type === "RECORD_PROPOSAL") {

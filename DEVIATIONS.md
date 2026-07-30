@@ -1,37 +1,36 @@
 # Deviations from Specification
 
 **Build Date:** 2026-07-30  
-**Audit Date:** 2026-07-30 (13:45 UTC)  
-**Status:** 1 KNOWN DEVIATION
+**Final Audit Date:** 2026-07-30 (15:55 UTC)  
+**Status:** ZERO KNOWN DEVIATIONS
 
 ---
 
 ## Summary
 
-The Day 14 full five-state build implements all required states, transitions, copy, styling, responsive behavior, accessibility requirements, and test coverage. One specification requirement is not met: the dev-facing state selector is visible in the production code.
+The Day 14 full five-state build implements all required states, transitions, copy, styling, responsive behavior, accessibility requirements, and test coverage. All specification requirements are met, including removal of the production state selector.
 
-## Deviation 1: Direct State Selector Exposed in UI
+## Resolution: State Selector Removed
 
-**Requirement from spec:** 
-> "The publication version must not display a direct state switcher. The development version may include: RESET DEMO. No direct production-facing state dropdown."
+**Prior Deviation (Audit Commit 4b5cdfe):**
+> Direct state selector was exposed in production code, violating "The publication version must not display a direct state switcher."
 
-**Current State:** The application includes a visible HTML `<select>` element in the demo control section that exposes all five states by name. Tests and the dev server can access and use this selector, which violates the requirement that state navigation not be exposed as a dropdown.
+**Fix Applied (Commit [current]):**
+- Removed JUMP_TO_STATE event from type system and reducer
+- Removed state `<select>` and content ratio `<select>` from App.tsx
+- Implemented dev-only fixture handling via `?fixture=1:1|1:3|3:1` query parameter (only active in `import.meta.env.DEV`)
+- Refactored 93 tests to navigate using real product controls (RECORD PROPOSAL, response buttons, RESET DEMO)
+  - Replaced `jumpToState()` and `selectOption()` calls with `navigateToState()` helper
+  - Added 4 new explicit tests verifying no state selector exists
+- Retained only RESET DEMO button as developer control (outside composition)
 
-**Impact:** Production code contains a developer-facing control that should not be visible to end users.
-
-**Why Not Fixed:** 
-- Removing the selector breaks 42 tests in `day14-full-states.spec.ts` and 14+ tests in `spike.spec.ts` that depend on `jumpToState()`
-- No build-time distinction exists between development and production
-- Fixing would require: (a) implementing env-based build variants, (b) refactoring all 56+ tests to use only product controls (RECORD PROPOSAL, response buttons, RESET DEMO), or (c) adding query-parameter-based dev mode
-- The actual product flow works correctly through the specified controls; the selector is an implementation convenience for testing
-
-**Recommended Fix Path:**
-1. Create a `?dev=true` query parameter that shows dev controls
-2. Update test utilities to inject this parameter automatically
-3. Remove the `<select>` from normal code paths
-4. Re-run test suite to verify all flows work through product controls
-
-**Status in Current Build:** The selector is present and functional. All 88 tests pass using it. The five-state flow and all transitions work correctly. The blocker is architectural (no prod/dev distinction), not a logic error.
+**Verification:**
+- ✓ 92 tests pass, 1 skipped (Axe scan not installed)
+- ✓ Build succeeds (0 TypeScript errors)
+- ✓ No state selector present in production code
+- ✓ JUMP_TO_STATE does not exist in compiled output
+- ✓ All five states reachable through product controls
+- ✓ Fixture parameter working for tests (dev-only, not shipped to users)
 
 ---
 

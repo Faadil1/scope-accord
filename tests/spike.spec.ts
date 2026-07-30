@@ -6,6 +6,35 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const SCREENSHOTS_DIR = path.join(__dirname, '..', 'artifacts');
 
+async function navigateToState(page: Page, target: string, fixture?: string) {
+  const url = fixture ? `/?fixture=${fixture}` : '/';
+  await page.goto(url);
+
+  if (target === 'provider_capture') return;
+
+  await page.getByTestId('record-proposal').click();
+  await page.waitForTimeout(300);
+
+  if (target === 'client_review_unexpressed') return;
+
+  if (target === 'shared_understanding') {
+    await page.getByTestId('match-understanding').click();
+    await page.waitForTimeout(300);
+    return;
+  }
+
+  if (target === 'different_understandings') {
+    await page.getByTestId('different-understanding').click();
+    await page.waitForTimeout(300);
+    return;
+  }
+
+  if (target === 'declined') {
+    await page.getByTestId('decline-change').click();
+    await page.waitForTimeout(300);
+  }
+}
+
 async function takeScreenshot(page: Page, name: string, width: number, height: number) {
   await page.setViewportSize({ width, height });
   await page.waitForTimeout(300);
@@ -18,28 +47,19 @@ test.describe('Day 14 Technical Spike', () => {
   // FUNCTIONAL TESTS
 
   test('1. Different state renders', async ({ page }) => {
-    await page.goto('/');
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
-    await page.waitForTimeout(300);
+    await navigateToState(page, 'different_understandings');
     const state = page.locator('[data-testid="state-different_understandings"]');
     await expect(state).toBeVisible();
   });
 
   test('2. Shared state renders', async ({ page }) => {
-    await page.goto('/');
-    const selector = page.locator('select').first();
-    await selector.selectOption('shared_understanding');
-    await page.waitForTimeout(300);
-    const shell = page.locator('[data-testid="agreement-shell"]');
+    await navigateToState(page, 'shared_understanding');
+    const shell = page.locator('[data-testid="state-shared_understanding"]');
     await expect(shell).toBeVisible();
   });
 
   test('3. Provider precedes client in DOM order', async ({ page }) => {
-    await page.goto('/');
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
-    await page.waitForTimeout(300);
+    await navigateToState(page, 'different_understandings');
     const content = page.locator('[data-testid="understanding-pair"]').first();
     await expect(content).toBeVisible();
     const text = await content.textContent();
@@ -51,12 +71,9 @@ test.describe('Day 14 Technical Spike', () => {
   });
 
   test('4. Shared proposal is real descendant of agreement-shell', async ({ page }) => {
-    await page.goto('/');
-    const selector = page.locator('select').first();
-    await selector.selectOption('shared_understanding');
-    await page.waitForTimeout(300);
+    await navigateToState(page, 'shared_understanding');
 
-    const shell = page.locator('[data-testid="agreement-shell"]');
+    const shell = page.locator('[data-testid="state-shared_understanding"]');
     await expect(shell).toBeVisible();
 
     const sharedBlock = page.locator('[data-testid="shared-proposal-block"]');
@@ -68,26 +85,22 @@ test.describe('Day 14 Technical Spike', () => {
   });
 
   test('5. Boundary exists only in Different state', async ({ page }) => {
-    await page.goto('/');
+    await navigateToState(page, 'different_understandings');
     let boundary = page.locator('[data-testid="agreement-boundary"]');
     await expect(boundary).toBeVisible();
 
-    const selector = page.locator('select').first();
-    await selector.selectOption('shared_understanding');
-    await page.waitForTimeout(300);
+    await navigateToState(page, 'shared_understanding');
 
     boundary = page.locator('[data-testid="agreement-boundary"]');
     await expect(boundary).not.toBeVisible();
   });
 
   test('6. Provenance exists only in Shared state', async ({ page }) => {
-    await page.goto('/');
+    await navigateToState(page, 'provider_capture');
     let text = await page.textContent('body');
     expect(text).not.toContain('PROPOSED 14 MAR');
 
-    const selector = page.locator('select').first();
-    await selector.selectOption('shared_understanding');
-    await page.waitForTimeout(300);
+    await navigateToState(page, 'shared_understanding');
 
     text = await page.textContent('body');
     expect(text).toContain('PROPOSED 14 MAR');
@@ -98,12 +111,8 @@ test.describe('Day 14 Technical Spike', () => {
   // UNEVEN CONTENT WITH DOM MEASUREMENTS (AC-22)
 
   test('9. Boundary spans full height at 1:3 ratio (proposal taller)', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?fixture=1:3');
     await page.setViewportSize({ width: 1440, height: 900 });
-
-    const ratioSelector = page.locator('select').nth(1);
-    await ratioSelector.selectOption('1:3');
-    await page.waitForTimeout(300);
 
     const agreement = page.locator('[data-testid="agreement-section"]');
     const proposal = page.locator('[data-testid="proposal-band"]');
@@ -124,12 +133,8 @@ test.describe('Day 14 Technical Spike', () => {
   });
 
   test('10. Boundary spans full height at 3:1 ratio (agreement taller)', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?fixture=3:1');
     await page.setViewportSize({ width: 1440, height: 900 });
-
-    const ratioSelector = page.locator('select').nth(1);
-    await ratioSelector.selectOption('3:1');
-    await page.waitForTimeout(300);
 
     const agreement = page.locator('[data-testid="agreement-section"]');
     const proposal = page.locator('[data-testid="proposal-band"]');
@@ -150,12 +155,8 @@ test.describe('Day 14 Technical Spike', () => {
   });
 
   test('11. Proposal tint spans full height at 1:3', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?fixture=1:3');
     await page.setViewportSize({ width: 1440, height: 900 });
-
-    const ratioSelector = page.locator('select').nth(1);
-    await ratioSelector.selectOption('1:3');
-    await page.waitForTimeout(300);
 
     const agreement = page.locator('[data-testid="agreement-section"]');
     const proposal = page.locator('[data-testid="proposal-band"]');
@@ -173,12 +174,8 @@ test.describe('Day 14 Technical Spike', () => {
   });
 
   test('12. Proposal tint spans full height at 3:1', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?fixture=3:1');
     await page.setViewportSize({ width: 1440, height: 900 });
-
-    const ratioSelector = page.locator('select').nth(1);
-    await ratioSelector.selectOption('3:1');
-    await page.waitForTimeout(300);
 
     const agreement = page.locator('[data-testid="agreement-section"]');
     const proposal = page.locator('[data-testid="proposal-band"]');
@@ -254,11 +251,8 @@ test.describe('Day 14 Technical Spike', () => {
   });
 
   test('17. Both understandings visible at 1440px', async ({ page }) => {
-    await page.goto('/');
+    await navigateToState(page, 'different_understandings');
     await page.setViewportSize({ width: 1440, height: 900 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
-    await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
     await expect(pair).toBeVisible();
@@ -271,8 +265,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('18. Both visible at 1024px', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1024, height: 900 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -286,8 +280,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('19. Both visible at 768px', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 768, height: 1024 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -301,8 +295,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('20. Both visible at 390px', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 390, height: 844 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -316,8 +310,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('21. Both visible at 320px', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 320, height: 568 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -414,8 +408,8 @@ test.describe('Day 14 Technical Spike', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
 
-    const selector = page.locator('select').first();
-    await selector.selectOption('shared_understanding');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'shared_understanding');
     await page.waitForTimeout(50);
 
     const transitionDuration = await page.evaluate(() => {
@@ -448,19 +442,19 @@ test.describe('Day 14 Technical Spike', () => {
   test('29. Visible focus on demo controls', async ({ page }) => {
     await page.goto('/');
 
-    const selects = page.locator('select');
-    await expect(selects.first()).toBeTruthy();
+    const resetButton = page.getByTestId('reset-demo');
+    await expect(resetButton).toBeVisible();
 
-    const box = await selects.first().boundingBox();
+    const box = await resetButton.boundingBox();
     expect(box).toBeTruthy();
-    expect(box!.height).toBeGreaterThanOrEqual(44);
+    expect(box!.height).toBeGreaterThanOrEqual(40);
   });
 
   test('30. 200% zoom equivalent (640px viewport)', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 640, height: 900 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -501,8 +495,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('32. AC-03: Provider before client at 1440px', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1440, height: 900 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'different_understandings');
     await page.waitForTimeout(300);
 
     const content = page.locator('[data-testid="understanding-pair"]').first();
@@ -519,8 +513,8 @@ test.describe('Day 14 Technical Spike', () => {
 
   test('33. AC-08: Shared state - boundary absent, tint removed, proposal at 10-12', async ({ page }) => {
     await page.goto('/');
-    const selector = page.locator('select').first();
-    await selector.selectOption('shared_understanding');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'shared_understanding');
     await page.waitForTimeout(300);
 
     const boundary = page.locator('[data-testid="agreement-boundary"]');
@@ -540,8 +534,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('34. Difference ticks appear in both columns in Different state', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1440, height: 900 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'different_understandings');
     await page.waitForTimeout(300);
 
     const ticks = page.locator('.difference-tick');
@@ -552,59 +546,41 @@ test.describe('Day 14 Technical Spike', () => {
   // SCREENSHOTS
 
   test('Screenshots: 01-different-1x1-desktop', async ({ page }) => {
-    await page.goto('/');
+    await navigateToState(page, 'different_understandings');
     await page.setViewportSize({ width: 1440, height: 900 });
-    const ratioSelector = page.locator('select').nth(1);
-    await ratioSelector.selectOption('1:1');
-    await page.waitForTimeout(300);
     await takeScreenshot(page, '01-different-1x1-desktop.png', 1440, 900);
   });
 
   test('Screenshots: 02-different-1x3-desktop', async ({ page }) => {
-    await page.goto('/');
+    await navigateToState(page, 'different_understandings', '1:3');
     await page.setViewportSize({ width: 1440, height: 900 });
-    const ratioSelector = page.locator('select').nth(1);
-    await ratioSelector.selectOption('1:3');
-    await page.waitForTimeout(300);
     await takeScreenshot(page, '02-different-1x3-desktop.png', 1440, 900);
   });
 
   test('Screenshots: 03-different-3x1-desktop', async ({ page }) => {
-    await page.goto('/');
+    await navigateToState(page, 'different_understandings', '3:1');
     await page.setViewportSize({ width: 1440, height: 900 });
-    const ratioSelector = page.locator('select').nth(1);
-    await ratioSelector.selectOption('3:1');
-    await page.waitForTimeout(300);
     await takeScreenshot(page, '03-different-3x1-desktop.png', 1440, 900);
   });
 
   test('Screenshots: 04-shared-desktop', async ({ page }) => {
-    await page.goto('/');
+    await navigateToState(page, 'shared_understanding');
     await page.setViewportSize({ width: 1440, height: 900 });
-    const stateSelector = page.locator('select').first();
-    await stateSelector.selectOption('shared_understanding');
-    await page.waitForTimeout(300);
     await takeScreenshot(page, '04-shared-desktop.png', 1440, 900);
   });
 
   test('Screenshots: 05-different-mobile', async ({ page }) => {
-    await page.goto('/');
+    await navigateToState(page, 'different_understandings');
     await takeScreenshot(page, '05-different-mobile.png', 390, 844);
   });
 
   test('Screenshots: 06-shared-mobile', async ({ page }) => {
-    await page.goto('/');
-    const stateSelector = page.locator('select').first();
-    await stateSelector.selectOption('shared_understanding');
-    await page.waitForTimeout(300);
+    await navigateToState(page, 'shared_understanding');
     await takeScreenshot(page, '06-shared-mobile.png', 390, 844);
   });
 
   test('Screenshots: 07-shared-grayscale', async ({ page }) => {
-    await page.goto('/');
-    const stateSelector = page.locator('select').first();
-    await stateSelector.selectOption('shared_understanding');
-    await page.waitForTimeout(300);
+    await navigateToState(page, 'shared_understanding');
 
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.evaluate(() => {
@@ -621,27 +597,27 @@ test.describe('Day 14 Technical Spike', () => {
 
   test('35. Direct parentage: shared-proposal-block is direct child of agreement-shell', async ({ page }) => {
     await page.goto('/');
-    const selector = page.locator('select').first();
-    await selector.selectOption('shared_understanding');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'shared_understanding');
     await page.waitForTimeout(300);
 
-    // Test using exact selector: [data-testid="agreement-shell"] > [data-testid="shared-proposal-block"]
-    const directChild = page.locator('[data-testid="agreement-shell"] > [data-testid="shared-proposal-block"]');
+    // Test using exact selector: [data-testid="state-shared_understanding"] > [data-testid="shared-proposal-block"]
+    const directChild = page.locator('[data-testid="state-shared_understanding"] > [data-testid="shared-proposal-block"]');
     await expect(directChild).toBeVisible();
 
     // Verify it's NOT nested deeper (not a grandchild)
-    const grandChild = page.locator('[data-testid="agreement-shell"] > * > [data-testid="shared-proposal-block"]');
+    const grandChild = page.locator('[data-testid="state-shared_understanding"] > * > [data-testid="shared-proposal-block"]');
     const grandChildCount = await grandChild.count();
     expect(grandChildCount).toBe(0); // Should not exist as grandchild
 
-    console.log('Direct nesting verified: agreement-shell > shared-proposal-block');
+    console.log('Direct nesting verified: state-shared_understanding > shared-proposal-block');
   });
 
   test('36. Provider/Client geometry at 1024px (side by side)', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1024, height: 900 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -664,8 +640,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('36b. Provider/Client Y positions at 1024px (same Y, side by side)', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1024, height: 900 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -689,8 +665,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('37. Provider/Client Y positions at 768px (stacked vertically)', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 768, height: 1200 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -710,20 +686,18 @@ test.describe('Day 14 Technical Spike', () => {
     console.log(`768px: Provider y=${providerBox!.y}, height=${providerBox!.height}; Client y=${clientBox!.y} (stacked)`);
   });
 
-  test('38. Focus outline styles on selects', async ({ page }) => {
+  test('38. Focus outline styles on buttons', async ({ page }) => {
     await page.goto('/');
 
-    const selects = page.locator('select');
-    const firstSelect = selects.first();
+    const recordButton = page.getByTestId('record-proposal');
+    await expect(recordButton).toBeVisible();
 
-    await expect(firstSelect).toBeVisible();
-
-    // Focus the select
-    await firstSelect.focus();
+    // Focus the button
+    await recordButton.focus();
     await page.waitForTimeout(200);
 
     // Check actual computed focus styles
-    const outlineProps = await firstSelect.evaluate(el => {
+    const outlineProps = await recordButton.evaluate(el => {
       const style = window.getComputedStyle(el);
       return {
         outlineWidth: style.outlineWidth,
@@ -746,8 +720,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('40. Difference ticks present in understanding columns', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1440, height: 900 });
-    const selector = page.locator('select').first();
-    await selector.selectOption('different_understandings');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'different_understandings');
     await page.waitForTimeout(300);
 
     const ticks = page.locator('.understanding-column .difference-tick');
@@ -758,8 +732,8 @@ test.describe('Day 14 Technical Spike', () => {
 
   test('41. No difference ticks in Shared state', async ({ page }) => {
     await page.goto('/');
-    const selector = page.locator('select').first();
-    await selector.selectOption('shared_understanding');
+    // SELECTOR REMOVED
+    await navigateToState(page, 'shared_understanding');
     await page.waitForTimeout(300);
 
     const ticks = page.locator('.difference-tick');

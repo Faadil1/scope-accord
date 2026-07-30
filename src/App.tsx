@@ -1,18 +1,25 @@
-import { useReducer, useState } from "react";
+import { useReducer, useMemo } from "react";
 import "./App.css";
 import {
   day14Reducer,
   day14InitialState,
 } from "./day14Reducer";
-import type {
-  Day14State,
-  ContentRatio,
-} from "./day14Types";
 import * as DATA from "./day14Data";
+
+type ContentRatio = "1:1" | "1:3" | "3:1";
 
 function App() {
   const [state, dispatch] = useReducer(day14Reducer, day14InitialState);
-  const [ratio, setRatio] = useState<ContentRatio>("1:1");
+
+  // Dev-only fixture handling via query parameter
+  const ratio = useMemo(() => {
+    if (typeof window === "undefined") return "1:1";
+    if (!import.meta.env.DEV) return "1:1"; // Production always uses 1:1
+
+    const params = new URLSearchParams(window.location.search);
+    const fixture = params.get("fixture") as ContentRatio | null;
+    return (fixture && ["1:1", "1:3", "3:1"].includes(fixture)) ? fixture : "1:1";
+  }, []);
 
   const renderRow = (
     label: string,
@@ -240,7 +247,7 @@ function App() {
   );
 
   const sharedUnderstanding = (
-    <div className="agreement-shell" data-testid="agreement-shell">
+    <div className="agreement-shell" data-testid="state-shared_understanding">
       <section className="existing-agreement" data-testid="existing-agreement">
         {agreementContent}
       </section>
@@ -322,66 +329,13 @@ function App() {
     <div className="app-container">
       <div className="demo-control">
         <div className="control-label">DEMO CONTROL — NOT PRODUCT UI</div>
-        <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-          <div>
-            <label
-              style={{
-                display: "block",
-                fontSize: "12px",
-                marginBottom: "8px",
-                fontWeight: 500,
-              }}
-            >
-              State:
-            </label>
-            <select
-              value={state}
-              onChange={(e) => {
-                const nextState = e.target.value as Day14State;
-                dispatch({ type: "JUMP_TO_STATE", payload: nextState });
-              }}
-            >
-              <option value="provider_capture">Provider Capture</option>
-              <option value="client_review_unexpressed">
-                Client Review Unexpressed
-              </option>
-              <option value="different_understandings">
-                Different Understandings
-              </option>
-              <option value="shared_understanding">Shared Understanding</option>
-              <option value="declined">Declined</option>
-            </select>
-          </div>
-          <div>
-            <label
-              style={{
-                display: "block",
-                fontSize: "12px",
-                marginBottom: "8px",
-                fontWeight: 500,
-              }}
-            >
-              Content Ratio:
-            </label>
-            <select
-              value={ratio}
-              onChange={(e) => setRatio(e.target.value as ContentRatio)}
-            >
-              <option value="1:1">1:1</option>
-              <option value="1:3">1:3</option>
-              <option value="3:1">3:1</option>
-            </select>
-          </div>
-          <div>
-            <button
-              className="control-button"
-              data-testid="reset-demo"
-              onClick={() => dispatch({ type: "RESET_DEMO" })}
-            >
-              RESET DEMO
-            </button>
-          </div>
-        </div>
+        <button
+          className="control-button"
+          data-testid="reset-demo"
+          onClick={() => dispatch({ type: "RESET_DEMO" })}
+        >
+          RESET DEMO
+        </button>
       </div>
 
       <div
