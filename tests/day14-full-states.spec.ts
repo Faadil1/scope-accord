@@ -73,7 +73,7 @@ test.describe("Day 14 Full Five-State Build", () => {
 
   test("4. Shared Understanding state renders", async ({ page }) => {
     await navigateToState(page, "shared_understanding");
-    const shell = page.locator('[data-testid="state-shared_understanding"]');
+    const shell = page.locator('[data-testid="agreement-shell"]');
     await expect(shell).toBeVisible();
   });
 
@@ -99,7 +99,7 @@ test.describe("Day 14 Full Five-State Build", () => {
     const button = page.locator('[data-testid="match-understanding"]');
     await button.click();
     await page.waitForTimeout(300);
-    const shell = page.locator('[data-testid="state-shared_understanding"]');
+    const shell = page.locator('[data-testid="agreement-shell"]');
     await expect(shell).toBeVisible();
   });
 
@@ -210,7 +210,7 @@ test.describe("Day 14 Full Five-State Build", () => {
   }) => {
     await page.goto("/");
     await navigateToState(page, "shared_understanding");
-    const shell = page.locator('[data-testid="state-shared_understanding"]');
+    const shell = page.locator('[data-testid="agreement-shell"]');
     const shellHTML = await shell.innerHTML();
     expect(shellHTML).toContain("shared-proposal-block");
   });
@@ -539,6 +539,92 @@ test.describe("Day 14 Full Five-State Build", () => {
     );
   });
 
+  // KEYBOARD OPERABILITY TESTS
+
+  test("46. Enter activates RECORD PROPOSAL", async ({ page }) => {
+    await page.goto("/");
+    const button = page.getByTestId("record-proposal");
+    await button.focus();
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(300);
+    const state = page.locator('[data-testid="state-client_review_unexpressed"]');
+    await expect(state).toBeVisible();
+  });
+
+  test("47. Space activates RECORD PROPOSAL", async ({ page }) => {
+    await page.goto("/");
+    const button = page.getByTestId("record-proposal");
+    await button.focus();
+    await page.keyboard.press("Space");
+    await page.waitForTimeout(300);
+    const state = page.locator('[data-testid="state-client_review_unexpressed"]');
+    await expect(state).toBeVisible();
+  });
+
+  test("48. Keyboard navigation reaches Shared Understanding", async ({ page }) => {
+    await page.goto("/");
+    const recordBtn = page.getByTestId("record-proposal");
+    const matchBtn = page.getByTestId("match-understanding");
+
+    await recordBtn.focus();
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(300);
+
+    await matchBtn.focus();
+    await page.keyboard.press("Space");
+    await page.waitForTimeout(300);
+
+    const state = page.locator('[data-testid="state-shared_understanding"]');
+    await expect(state).toBeVisible();
+  });
+
+  test("49. Keyboard navigation reaches Different Understandings", async ({ page }) => {
+    await page.goto("/");
+    const recordBtn = page.getByTestId("record-proposal");
+    const differentBtn = page.getByTestId("different-understanding");
+
+    await recordBtn.focus();
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(300);
+
+    await differentBtn.focus();
+    await page.keyboard.press("Space");
+    await page.waitForTimeout(300);
+
+    const state = page.locator('[data-testid="state-different_understandings"]');
+    await expect(state).toBeVisible();
+  });
+
+  test("50. Keyboard navigation reaches Declined", async ({ page }) => {
+    await page.goto("/");
+    const recordBtn = page.getByTestId("record-proposal");
+    const declineBtn = page.getByTestId("decline-change");
+
+    await recordBtn.focus();
+    await page.keyboard.press("Space");
+    await page.waitForTimeout(300);
+
+    await declineBtn.focus();
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(300);
+
+    const state = page.locator('[data-testid="state-declined"]');
+    await expect(state).toBeVisible();
+  });
+
+  test("51. RESET DEMO is keyboard-operable", async ({ page }) => {
+    await page.goto("/");
+    await navigateToState(page, "shared_understanding");
+
+    const resetBtn = page.getByTestId("reset-demo");
+    await resetBtn.focus();
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(300);
+
+    const state = page.locator('[data-testid="state-provider_capture"]');
+    await expect(state).toBeVisible();
+  });
+
   // SCREENSHOT GENERATION
 
   test("SCREENSHOTS: Generate all 13 screenshots", async ({ page }) => {
@@ -585,7 +671,11 @@ test.describe("Day 14 Full Five-State Build", () => {
 
     await navigateToState(page, "shared_understanding");
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.emulateMedia({ colorScheme: "dark" });
+    await page.evaluate(() => {
+      const style = document.createElement("style");
+      style.textContent = "html { filter: grayscale(100%); }";
+      document.head.appendChild(style);
+    });
     await page.waitForTimeout(300);
     await takeScreenshot(page, "13-shared-grayscale.png", 1440, 900);
   });

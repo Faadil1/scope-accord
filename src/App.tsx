@@ -247,8 +247,12 @@ function App() {
   );
 
   const sharedUnderstanding = (
-    <div className="agreement-shell" data-testid="state-shared_understanding">
-      <section className="existing-agreement" data-testid="existing-agreement">
+    <div data-testid="state-shared_understanding">
+      <div
+        className="agreement-shell"
+        data-testid="agreement-shell"
+      >
+        <section className="existing-agreement" data-testid="existing-agreement">
         {agreementContent}
       </section>
       <section className="shared-proposal-block" data-testid="shared-proposal-block">
@@ -274,6 +278,7 @@ function App() {
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 

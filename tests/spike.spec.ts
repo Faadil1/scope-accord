@@ -54,7 +54,7 @@ test.describe('Day 14 Technical Spike', () => {
 
   test('2. Shared state renders', async ({ page }) => {
     await navigateToState(page, 'shared_understanding');
-    const shell = page.locator('[data-testid="state-shared_understanding"]');
+    const shell = page.locator('[data-testid="agreement-shell"]');
     await expect(shell).toBeVisible();
   });
 
@@ -73,7 +73,7 @@ test.describe('Day 14 Technical Spike', () => {
   test('4. Shared proposal is real descendant of agreement-shell', async ({ page }) => {
     await navigateToState(page, 'shared_understanding');
 
-    const shell = page.locator('[data-testid="state-shared_understanding"]');
+    const shell = page.locator('[data-testid="agreement-shell"]');
     await expect(shell).toBeVisible();
 
     const sharedBlock = page.locator('[data-testid="shared-proposal-block"]');
@@ -601,16 +601,16 @@ test.describe('Day 14 Technical Spike', () => {
     await navigateToState(page, 'shared_understanding');
     await page.waitForTimeout(300);
 
-    // Test using exact selector: [data-testid="state-shared_understanding"] > [data-testid="shared-proposal-block"]
-    const directChild = page.locator('[data-testid="state-shared_understanding"] > [data-testid="shared-proposal-block"]');
+    // Test using exact selector: [data-testid="agreement-shell"] > [data-testid="shared-proposal-block"]
+    const directChild = page.locator('[data-testid="agreement-shell"] > [data-testid="shared-proposal-block"]');
     await expect(directChild).toBeVisible();
 
     // Verify it's NOT nested deeper (not a grandchild)
-    const grandChild = page.locator('[data-testid="state-shared_understanding"] > * > [data-testid="shared-proposal-block"]');
+    const grandChild = page.locator('[data-testid="agreement-shell"] > * > [data-testid="shared-proposal-block"]');
     const grandChildCount = await grandChild.count();
     expect(grandChildCount).toBe(0); // Should not exist as grandchild
 
-    console.log('Direct nesting verified: state-shared_understanding > shared-proposal-block');
+    console.log('Direct nesting verified: agreement-shell > shared-proposal-block');
   });
 
   test('36. Provider/Client geometry at 1024px (side by side)', async ({ page }) => {
