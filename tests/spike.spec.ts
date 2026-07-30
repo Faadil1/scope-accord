@@ -19,6 +19,9 @@ test.describe('Day 14 Technical Spike', () => {
 
   test('1. Different state renders', async ({ page }) => {
     await page.goto('/');
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
+    await page.waitForTimeout(300);
     const state = page.locator('[data-testid="state-different_understandings"]');
     await expect(state).toBeVisible();
   });
@@ -34,6 +37,9 @@ test.describe('Day 14 Technical Spike', () => {
 
   test('3. Provider precedes client in DOM order', async ({ page }) => {
     await page.goto('/');
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
+    await page.waitForTimeout(300);
     const content = page.locator('[data-testid="understanding-pair"]').first();
     await expect(content).toBeVisible();
     const text = await content.textContent();
@@ -250,6 +256,9 @@ test.describe('Day 14 Technical Spike', () => {
   test('17. Both understandings visible at 1440px', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1440, height: 900 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
+    await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
     await expect(pair).toBeVisible();
@@ -262,6 +271,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('18. Both visible at 1024px', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1024, height: 900 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -275,6 +286,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('19. Both visible at 768px', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 768, height: 1024 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -288,6 +301,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('20. Both visible at 390px', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 390, height: 844 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -301,6 +316,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('21. Both visible at 320px', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 320, height: 568 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -442,6 +459,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('30. 200% zoom equivalent (640px viewport)', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 640, height: 900 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -482,6 +501,9 @@ test.describe('Day 14 Technical Spike', () => {
   test('32. AC-03: Provider before client at 1440px', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1440, height: 900 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
+    await page.waitForTimeout(300);
 
     const content = page.locator('[data-testid="understanding-pair"]').first();
     const text = await content.textContent();
@@ -518,6 +540,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('34. Difference ticks appear in both columns in Different state', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1440, height: 900 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
     await page.waitForTimeout(300);
 
     const ticks = page.locator('.difference-tick');
@@ -616,6 +640,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('36. Provider/Client geometry at 1024px (side by side)', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1024, height: 900 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -638,6 +664,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('36b. Provider/Client Y positions at 1024px (same Y, side by side)', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1024, height: 900 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -661,6 +689,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('37. Provider/Client Y positions at 768px (stacked vertically)', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 768, height: 1200 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
     await page.waitForTimeout(300);
 
     const pair = page.locator('[data-testid="understanding-pair"]');
@@ -716,6 +746,8 @@ test.describe('Day 14 Technical Spike', () => {
   test('40. Difference ticks present in understanding columns', async ({ page }) => {
     await page.goto('/');
     await page.setViewportSize({ width: 1440, height: 900 });
+    const selector = page.locator('select').first();
+    await selector.selectOption('different_understandings');
     await page.waitForTimeout(300);
 
     const ticks = page.locator('.understanding-column .difference-tick');
