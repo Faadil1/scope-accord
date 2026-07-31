@@ -45,7 +45,12 @@ export function UnderstandingComparison({
   return (
     <section className={`v2-comparison v2-comparison-${variant}`}>
       <div className="v2-comparison-head">
-        <h2 className="v2-eyebrow">Expressed Understandings</h2>
+        {/* Only the provider has expressed an understanding in the unexpressed
+            variant, so the heading states status rather than claiming both
+            sides have expressed. */}
+        <h2 className="v2-eyebrow">
+          {isDifferent ? "Expressed Understandings" : "Understanding Status"}
+        </h2>
         {isDifferent && (
           <p className="v2-annotation" aria-hidden="true">
             <span>Same request</span>

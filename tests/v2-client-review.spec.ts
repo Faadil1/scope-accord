@@ -175,6 +175,78 @@ test.describe("Scope Accord V2 — Client Review / Not Yet Expressed", () => {
     await expect(page.locator('[data-testid="state-declined"]')).toBeVisible();
   });
 
+  test("C13. Each variant renders its own section heading", async ({ page }) => {
+    await toClientReview(page);
+    const crHeading = page.locator(".v2-comparison h2");
+    await expect(crHeading).toHaveCount(1);
+    expect((await crHeading.textContent())?.trim()).toBe("Understanding Status");
+    const size = await crHeading.evaluate((el) =>
+      parseFloat(getComputedStyle(el).fontSize)
+    );
+    expect(size).toBeGreaterThanOrEqual(12);
+
+    await toDifferent(page);
+    const duHeading = page.locator(".v2-comparison h2");
+    await expect(duHeading).toHaveCount(1);
+    expect((await duHeading.textContent())?.trim()).toBe(
+      "Expressed Understandings"
+    );
+  });
+
+  test("C14. Desktop renders three equal action columns on one row", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await toClientReview(page);
+
+    const boxes = [];
+    for (const id of [
+      "match-understanding",
+      "different-understanding",
+      "decline-change",
+    ]) {
+      boxes.push((await page.getByTestId(id).boundingBox())!);
+    }
+    // Equal widths and heights, all on the same row.
+    expect(Math.abs(boxes[0].width - boxes[1].width)).toBeLessThan(2);
+    expect(Math.abs(boxes[1].width - boxes[2].width)).toBeLessThan(2);
+    for (const b of boxes) {
+      expect(b.height).toBeGreaterThanOrEqual(44);
+      expect(Math.abs(b.y - boxes[0].y)).toBeLessThan(2);
+      expect(Math.abs(b.height - boxes[0].height)).toBeLessThan(2);
+    }
+    // The row consumes the full content width: no dead area on the right.
+    const row = (await page.locator(".v2-action-row").boundingBox())!;
+    const lastEdge = boxes[2].x + boxes[2].width;
+    expect(Math.abs(lastEdge - (row.x + row.width))).toBeLessThan(2);
+  });
+
+  test("C15. Tablet spans the primary and pairs the secondaries", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await toClientReview(page);
+
+    const match = (await page.getByTestId("match-understanding").boundingBox())!;
+    const different = (await page
+      .getByTestId("different-understanding")
+      .boundingBox())!;
+    const decline = (await page.getByTestId("decline-change").boundingBox())!;
+    const row = (await page.locator(".v2-action-row").boundingBox())!;
+
+    // Primary spans the full row on its own line.
+    expect(Math.abs(match.width - row.width)).toBeLessThan(2);
+    expect(different.y).toBeGreaterThan(match.y + match.height - 5);
+
+    // Secondaries share the second row at equal width.
+    expect(Math.abs(different.width - decline.width)).toBeLessThan(2);
+    expect(Math.abs(different.y - decline.y)).toBeLessThan(2);
+    expect(different.x + different.width).toBeLessThanOrEqual(decline.x + 1);
+    for (const b of [match, different, decline]) {
+      expect(b.height).toBeGreaterThanOrEqual(44);
+    }
+  });
+
   test("C12. Focus returns to the state line after each control unmounts", async ({
     page,
   }) => {

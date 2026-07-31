@@ -1275,10 +1275,29 @@
 /* ---------- Real client response controls ---------- */
 
 .v2-action-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
-  flex-wrap: wrap;
   align-items: stretch;
+}
+
+/* Two columns: the primary spans the first row, the two secondaries share
+   the second at equal width. No isolated third control. */
+@media (min-width: 768px) and (max-width: 1099px) {
+  .v2-action-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .v2-action-primary {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Three equal columns spanning the full content width. */
+@media (min-width: 1100px) {
+  .v2-action-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .v2-action {
@@ -1291,7 +1310,7 @@
   padding: 13px 20px;
   border-radius: var(--v2-radius);
   cursor: pointer;
-  white-space: nowrap;
+  white-space: normal;
   text-align: center;
   transition: background-color var(--v2-motion) var(--v2-ease),
     border-color var(--v2-motion) var(--v2-ease),
@@ -1341,14 +1360,7 @@
 }
 
 @media (max-width: 767px) {
-  .v2-action-row {
-    flex-direction: column;
-    gap: 12px;
-  }
-
   .v2-action {
-    width: 100%;
-    white-space: normal;
     padding: 13px 16px;
   }
 
