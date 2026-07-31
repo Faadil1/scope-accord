@@ -151,15 +151,14 @@ export function DifferentUnderstandingsV2({
                 <p className="v2-doc-sub">{DATA.CURRENT_AGREEMENT.venue}</p>
               </div>
 
+              {/* Venue is carried once, as subtext under the title, so it is
+                  never repeated here. */}
               <div className="v2-facts">
                 {items.includes("COST") && (
                   <Fact label="Cost" value={DATA.CURRENT_AGREEMENT.cost} mono />
                 )}
                 {items.includes("DATE") && (
                   <Fact label="Date" value={DATA.CURRENT_AGREEMENT.date} mono />
-                )}
-                {items.includes("VENUE") && (
-                  <Fact label="Venue" value={DATA.CURRENT_AGREEMENT.venue} />
                 )}
               </div>
 
