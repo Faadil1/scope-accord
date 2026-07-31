@@ -6,6 +6,7 @@ import {
 } from "./day14Reducer";
 import * as DATA from "./day14Data";
 import { DifferentUnderstandingsV2 } from "./v2/DifferentUnderstandingsV2";
+import { ClientReviewUnexpressedV2 } from "./v2/ClientReviewUnexpressedV2";
 
 type ContentRatio = "1:1" | "1:3" | "3:1";
 
@@ -173,61 +174,6 @@ function App() {
     </div>
   );
 
-  const clientReviewUnexpressed = (
-    <div className="composition" data-testid="state-client_review_unexpressed">
-      <section className="agreement-section" data-testid="agreement-section">
-        {agreementContent}
-      </section>
-      <div className="agreement-boundary" data-testid="agreement-boundary" />
-      <section className="proposal-band" data-testid="proposal-band">
-        {proposalContent}
-        <div
-          className="understanding-pair unexpressed"
-          data-testid="understanding-pair"
-        >
-          <div className="understanding-column" data-testid="provider-understanding">
-            <h5 className="understanding-label">
-              {DATA.PROVIDER_UNDERSTANDING.heading}
-            </h5>
-            <p className="understanding-text">
-              {DATA.PROVIDER_UNDERSTANDING.text}
-            </p>
-          </div>
-          <div className="understanding-divider dashed" />
-          <div className="understanding-column" data-testid="client-understanding">
-            <h5 className="understanding-label">CLIENT UNDERSTANDING</h5>
-            <p className="understanding-text unexpressed-text">
-              {DATA.CLIENT_UNDERSTANDING_UNEXPRESSED.text}
-            </p>
-          </div>
-        </div>
-        <div className="control-row three-buttons">
-          <button
-            className="control-button"
-            data-testid="match-understanding"
-            onClick={() => dispatch({ type: "EXPRESS_MATCH" })}
-          >
-            THIS MATCHES MY UNDERSTANDING
-          </button>
-          <button
-            className="control-button"
-            data-testid="different-understanding"
-            onClick={() => dispatch({ type: "EXPRESS_DIFFERENCE" })}
-          >
-            I UNDERSTOOD SOMETHING DIFFERENT
-          </button>
-          <button
-            className="control-button"
-            data-testid="decline-change"
-            onClick={() => dispatch({ type: "DECLINE_CHANGE" })}
-          >
-            I DO NOT WANT TO ADD THIS
-          </button>
-        </div>
-      </section>
-    </div>
-  );
-
   const sharedUnderstanding = (
     <div data-testid="state-shared_understanding">
       <div
@@ -299,8 +245,6 @@ function App() {
     switch (state) {
       case "provider_capture":
         return providerCapture;
-      case "client_review_unexpressed":
-        return clientReviewUnexpressed;
       case "shared_understanding":
         return sharedUnderstanding;
       case "declined":
@@ -346,6 +290,19 @@ function App() {
         ratio={ratio}
         stateLine={stateLine}
         onReset={() => dispatch({ type: "RESET_DEMO" })}
+      />
+    );
+  }
+
+  if (state === "client_review_unexpressed") {
+    return (
+      <ClientReviewUnexpressedV2
+        ratio={ratio}
+        stateLine={stateLine}
+        onReset={() => dispatch({ type: "RESET_DEMO" })}
+        onMatch={() => dispatch({ type: "EXPRESS_MATCH" })}
+        onDifferent={() => dispatch({ type: "EXPRESS_DIFFERENCE" })}
+        onDecline={() => dispatch({ type: "DECLINE_CHANGE" })}
       />
     );
   }
