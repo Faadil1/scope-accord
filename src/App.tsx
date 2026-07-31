@@ -9,6 +9,7 @@ import * as DATA from "./day14Data";
 import { DifferentUnderstandingsV2 } from "./v2/DifferentUnderstandingsV2";
 import { ClientReviewUnexpressedV2 } from "./v2/ClientReviewUnexpressedV2";
 import { ProviderCaptureV2 } from "./v2/ProviderCaptureV2";
+import { DeclinedV2 } from "./v2/DeclinedV2";
 
 type ContentRatio = "1:1" | "1:3" | "3:1";
 
@@ -172,43 +173,10 @@ function App() {
     </div>
   );
 
-  const declined = (
-    <div className="composition" data-testid="state-declined">
-      <section className="agreement-section" data-testid="agreement-section">
-        {agreementContent}
-      </section>
-      <div className="agreement-boundary" data-testid="agreement-boundary" />
-      <section className="proposal-band" data-testid="proposal-band">
-        {proposalContent}
-        <div className="understanding-pair" data-testid="understanding-pair">
-          <div className="understanding-column" data-testid="provider-understanding">
-            <h5 className="understanding-label">
-              {DATA.PROVIDER_UNDERSTANDING.heading}
-            </h5>
-            <p className="understanding-text">
-              {DATA.PROVIDER_UNDERSTANDING.text}
-            </p>
-          </div>
-          <div className="understanding-divider" />
-          <div className="understanding-column" data-testid="client-response">
-            <h5 className="understanding-label">
-              {DATA.CLIENT_RESPONSE_DECLINE.heading}
-            </h5>
-            <p className="understanding-text">
-              {DATA.CLIENT_RESPONSE_DECLINE.text}
-            </p>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-
   const renderState = () => {
     switch (state) {
       case "shared_understanding":
         return sharedUnderstanding;
-      case "declined":
-        return declined;
       default:
         return null;
     }
@@ -251,6 +219,16 @@ function App() {
         stateLine={stateLine}
         onReset={() => dispatch({ type: "RESET_DEMO" })}
         onRecordProposal={() => dispatch({ type: "RECORD_PROPOSAL" })}
+      />
+    );
+  }
+
+  if (state === "declined") {
+    return (
+      <DeclinedV2
+        ratio={ratio}
+        stateLine={stateLine}
+        onReset={() => dispatch({ type: "RESET_DEMO" })}
       />
     );
   }

@@ -1461,7 +1461,8 @@
 
 /* ---------- The provider's expressed understanding ---------- */
 
-.v2-record-label {
+.v2-record-label,
+.v2-response-label {
   font-family: var(--v2-sans);
   font-size: 12px;
   font-weight: 600;
@@ -1471,12 +1472,14 @@
   margin: 0 0 12px 0;
 }
 
-.v2-record-emphasis {
+.v2-record-emphasis,
+.v2-response-emphasis {
   padding-left: 0;
   margin: 0 0 7px 0;
 }
 
-.v2-record-statement {
+.v2-record-statement,
+.v2-response-statement {
   font-family: var(--v2-sans);
   font-size: 15px;
   line-height: 1.5;
@@ -1535,7 +1538,81 @@
     font-size: 16px;
   }
 
-  .v2-record-statement {
+  .v2-record-statement,
+  .v2-response-statement {
     font-size: 16px;
+  }
+}
+
+
+/* ============================================================
+   V2.4 — DECLINED
+   ============================================================ */
+
+/* Quieter than locked, still fully present. The client declined the addition;
+   the boundary itself is unchanged and unbroken. */
+.v2-rail-declined {
+  background: linear-gradient(
+    to right,
+    rgba(168, 94, 18, 0) 0%,
+    rgba(168, 94, 18, 0.055) 34%,
+    rgba(201, 130, 30, 0.1) 50%,
+    rgba(168, 94, 18, 0.055) 66%,
+    rgba(168, 94, 18, 0) 100%
+  );
+}
+
+/* ---------- Change response band ---------- */
+
+.v2-response {
+  background: var(--v2-espresso);
+  color: var(--v2-ivory-paper);
+  border-radius: var(--v2-radius);
+  padding: 18px 24px 20px 24px;
+}
+
+.v2-response .v2-eyebrow {
+  color: var(--v2-label-light);
+}
+
+.v2-response .v2-comparison-head {
+  margin-bottom: 18px;
+}
+
+/* Equal width, equal top alignment, one quiet solid divider. */
+.v2-response-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+  column-gap: 26px;
+  align-items: stretch;
+}
+
+.v2-response-divider {
+  background: var(--v2-line-light);
+}
+
+.v2-response-region {
+  padding: 0;
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .v2-response {
+    padding: 14px 13px 16px 13px;
+  }
+
+  .v2-response .v2-comparison-head {
+    margin-bottom: 14px;
+  }
+
+  /* Provider first, client second, separated by one quiet solid seam. */
+  .v2-response-grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 16px;
+    column-gap: 0;
+  }
+
+  .v2-response-divider {
+    height: 1px;
   }
 }

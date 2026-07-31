@@ -5,7 +5,7 @@
  * the label and lock. The `absent` mode is reserved for shared_understanding,
  * where the proposal moves inside the agreement and no boundary exists.
  */
-export type BoundaryMode = "recording" | "unexpressed" | "locked";
+export type BoundaryMode = "recording" | "unexpressed" | "locked" | "declined";
 
 function LockMark() {
   return (
