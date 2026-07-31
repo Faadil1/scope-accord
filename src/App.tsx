@@ -5,6 +5,7 @@ import {
   day14InitialState,
 } from "./day14Reducer";
 import * as DATA from "./day14Data";
+import { DifferentUnderstandingsV2 } from "./v2/DifferentUnderstandingsV2";
 
 type ContentRatio = "1:1" | "1:3" | "3:1";
 
@@ -227,37 +228,6 @@ function App() {
     </div>
   );
 
-  const differentUnderstandings = (
-    <div className="composition" data-testid="state-different_understandings">
-      <section className="agreement-section" data-testid="agreement-section">
-        {agreementContent}
-      </section>
-      <div className="agreement-boundary" data-testid="agreement-boundary" />
-      <section className="proposal-band" data-testid="proposal-band">
-        {proposalContent}
-        <div className="understanding-pair" data-testid="understanding-pair">
-          <div className="understanding-column" data-testid="provider-understanding">
-            <h5 className="understanding-label">
-              {DATA.PROVIDER_UNDERSTANDING.heading}
-            </h5>
-            <div className="difference-tick" />
-            <p className="understanding-text">
-              {DATA.PROVIDER_UNDERSTANDING.text}
-            </p>
-          </div>
-          <div className="understanding-divider" />
-          <div className="understanding-column" data-testid="client-understanding">
-            <h5 className="understanding-label">CLIENT UNDERSTANDING</h5>
-            <div className="difference-tick" />
-            <p className="understanding-text">
-              {DATA.CLIENT_UNDERSTANDING_DIFFERENT.text}
-            </p>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-
   const sharedUnderstanding = (
     <div data-testid="state-shared_understanding">
       <div
@@ -331,8 +301,6 @@ function App() {
         return providerCapture;
       case "client_review_unexpressed":
         return clientReviewUnexpressed;
-      case "different_understandings":
-        return differentUnderstandings;
       case "shared_understanding":
         return sharedUnderstanding;
       case "declined":
@@ -341,6 +309,32 @@ function App() {
         return null;
     }
   };
+
+  // Single state-line instance so the focus ref and aria-live contract hold
+  // in every state, including the V2 composition.
+  const stateLine = (
+    <div
+      ref={stateLineRef}
+      className="state-line"
+      data-testid="state-line"
+      aria-live="polite"
+      role="status"
+      tabIndex={-1}
+    >
+      <span className="state-tick" />
+      {getStateText()}
+    </div>
+  );
+
+  if (state === "different_understandings") {
+    return (
+      <DifferentUnderstandingsV2
+        ratio={ratio}
+        stateLine={stateLine}
+        onReset={() => dispatch({ type: "RESET_DEMO" })}
+      />
+    );
+  }
 
   return (
     <div className="app-container">
@@ -355,17 +349,7 @@ function App() {
         </button>
       </div>
 
-      <div
-        ref={stateLineRef}
-        className="state-line"
-        data-testid="state-line"
-        aria-live="polite"
-        role="status"
-        tabIndex={-1}
-      >
-        <span className="state-tick" />
-        {getStateText()}
-      </div>
+      {stateLine}
 
       {renderState()}
     </div>

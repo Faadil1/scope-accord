@@ -1,0 +1,786 @@
+/* ============================================================
+   SCOPE ACCORD V2 — TOKEN LAYER
+   Phase 1: different_understandings only.
+   ============================================================ */
+
+:root {
+  /* Surfaces */
+  --v2-shell: #0d0d0c;
+  --v2-panel-dark: #151412;
+  --v2-panel-dark-raised: #1c1a17;
+  --v2-paper: #eee7dc;
+  --v2-paper-deep: #dfd5c7;
+
+  /* Ink */
+  --v2-ink-light: #f1eadf;
+  --v2-ink-dark: #191714;
+  --v2-quiet-light: rgba(241, 234, 223, 0.62);
+  --v2-quiet-dark: rgba(25, 23, 20, 0.6);
+
+  /* Contrast-safe text variants of the quiet tokens.
+     The base quiet tokens sit below 4.5:1 for body text, so they are used
+     for hairlines and ornament while these carry small text. */
+  --v2-quiet-light-aa: rgba(241, 234, 223, 0.78);
+  --v2-quiet-dark-aa: rgba(25, 23, 20, 0.76);
+
+  /* Signal */
+  --v2-rust: #9a3e26;
+  --v2-amber: #c4812f;
+  --v2-sage: #76806b;
+
+  /* Lines */
+  --v2-line-light: rgba(241, 234, 223, 0.18);
+  --v2-line-dark: rgba(25, 23, 20, 0.18);
+
+  /* Type */
+  --v2-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+    "Times New Roman", serif;
+  --v2-sans: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --v2-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Form */
+  --v2-radius: 2px;
+  --v2-motion: 180ms;
+  --v2-motion-slow: 220ms;
+  --v2-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================
+   SHELL
+   ============================================================ */
+
+.v2-shell {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--v2-shell);
+  color: var(--v2-ink-light);
+  font-family: var(--v2-sans);
+  /* The app scaffold centres #root; documents read left-aligned. */
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Top bar ---------- */
+
+.v2-topbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 24px;
+  min-height: 56px;
+  background: var(--v2-panel-dark);
+  border-bottom: 1px solid var(--v2-line-light);
+  flex-wrap: wrap;
+}
+
+.v2-brand {
+  font-family: var(--v2-serif);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0;
+  color: var(--v2-ink-light);
+  white-space: nowrap;
+}
+
+.v2-context {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--v2-quiet-light-aa);
+}
+
+.v2-context-rule {
+  display: inline-block;
+  width: 1px;
+  height: 12px;
+  background: var(--v2-line-light);
+  flex: none;
+}
+
+.v2-context-change {
+  font-family: var(--v2-mono);
+  color: var(--v2-amber);
+  letter-spacing: 0.04em;
+}
+
+.v2-utilities {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.v2-shell .control-button.v2-utility {
+  font-family: var(--v2-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: var(--v2-radius);
+  border: 1px solid var(--v2-line-light);
+  background: transparent;
+  color: var(--v2-quiet-light-aa);
+  transition: color var(--v2-motion) var(--v2-ease),
+    border-color var(--v2-motion) var(--v2-ease);
+}
+
+.v2-shell .control-button.v2-utility:hover {
+  color: var(--v2-ink-light);
+  border-color: var(--v2-quiet-light);
+  background: transparent;
+}
+
+.v2-shell .control-button.v2-utility:focus-visible {
+  outline: 2px solid var(--v2-amber);
+  outline-offset: 2px;
+}
+
+/* ---------- Body / navigation rail ---------- */
+
+.v2-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 176px minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.v2-nav {
+  border-right: 1px solid var(--v2-line-light);
+  padding: 20px 0;
+  background: var(--v2-panel-dark);
+}
+
+.v2-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.v2-nav-item {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--v2-quiet-light-aa);
+  padding: 11px 20px;
+  border-left: 2px solid transparent;
+}
+
+.v2-nav-item[aria-current] {
+  color: var(--v2-ink-light);
+  border-left-color: var(--v2-rust);
+  background: var(--v2-panel-dark-raised);
+}
+
+.v2-main {
+  min-width: 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* The canvas takes the free height so the page has no dead band above the
+   footer; leftover space reads as document page area. */
+@media (min-width: 768px) {
+  .v2-main {
+    display: grid;
+    /* The canvas absorbs the free height: it keeps the boundary rail at full
+       document height and leaves no dead band above the footer. The
+       min-content floor keeps taller fixtures from being squeezed. */
+    grid-template-rows: minmax(min-content, 1fr) auto auto;
+  }
+}
+
+/* ============================================================
+   AGREEMENT CANVAS — the boundary is the spine of the layout
+   ============================================================ */
+
+.v2-canvas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.v2-region-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 14px 0;
+}
+
+.v2-doc-title {
+  font-family: var(--v2-serif);
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 4px 0;
+}
+
+/* ---------- Left region: current agreement on warm paper ---------- */
+
+.v2-agreement {
+  background: var(--v2-paper);
+  color: var(--v2-ink-dark);
+  padding: 22px 24px;
+  border-radius: var(--v2-radius) 0 0 var(--v2-radius);
+  min-width: 0;
+}
+
+.v2-agreement .v2-region-label {
+  color: var(--v2-quiet-dark-aa);
+}
+
+.v2-agreement-foundations {
+  border-bottom: 1px solid var(--v2-line-dark);
+  padding-bottom: 14px;
+  margin-bottom: 6px;
+}
+
+.v2-foundation-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 12px;
+  color: var(--v2-quiet-dark-aa);
+  letter-spacing: 0.03em;
+}
+
+.v2-foundation-meta span {
+  white-space: nowrap;
+}
+
+/* ---------- Commitment ledger ---------- */
+
+.v2-ledger {
+  display: block;
+}
+
+.v2-ledger-row {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: 4px 16px;
+  align-items: baseline;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--v2-line-dark);
+}
+
+.v2-ledger-row:last-child {
+  border-bottom: none;
+}
+
+.v2-ledger-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--v2-quiet-dark-aa);
+}
+
+.v2-ledger-value {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--v2-ink-dark);
+}
+
+.v2-ledger-value.v2-figure {
+  font-family: var(--v2-mono);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Boundary rail ---------- */
+
+.v2-rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: linear-gradient(
+    to right,
+    rgba(154, 62, 38, 0) 0%,
+    rgba(154, 62, 38, 0.16) 45%,
+    rgba(154, 62, 38, 0.16) 55%,
+    rgba(154, 62, 38, 0) 100%
+  );
+  transition: background var(--v2-motion-slow) var(--v2-ease);
+}
+
+/* The structural line. Height is driven by the stretched grid row, which is
+   what keeps it spanning the taller of the two regions. */
+.v2-shell .agreement-boundary {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: auto;
+  margin: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(154, 62, 38, 0.35) 0%,
+    var(--v2-rust) 12%,
+    var(--v2-amber) 50%,
+    var(--v2-rust) 88%,
+    rgba(154, 62, 38, 0.35) 100%
+  );
+  box-shadow: 0 0 12px rgba(196, 129, 47, 0.45);
+}
+
+.v2-rail-label,
+.v2-rail-lock {
+  position: relative;
+  z-index: 1;
+  background: var(--v2-shell);
+}
+
+.v2-rail-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--v2-amber);
+  padding: 14px 3px;
+  white-space: nowrap;
+}
+
+.v2-rail-lock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--v2-rust);
+  border-radius: var(--v2-radius);
+  color: var(--v2-amber);
+  flex: none;
+}
+
+.v2-rail-lock svg {
+  display: block;
+}
+
+/* ---------- Right region: proposed change on dark surface ---------- */
+
+.v2-proposal {
+  background: var(--v2-panel-dark);
+  border: 1px solid var(--v2-line-light);
+  border-left: none;
+  color: var(--v2-ink-light);
+  padding: 22px 24px;
+  border-radius: 0 var(--v2-radius) var(--v2-radius) 0;
+  min-width: 0;
+}
+
+.v2-proposal .v2-region-label {
+  color: var(--v2-amber);
+}
+
+.v2-proposal .v2-doc-title {
+  color: var(--v2-ink-light);
+}
+
+.v2-proposal-head {
+  border-bottom: 1px solid var(--v2-line-light);
+  padding-bottom: 14px;
+  margin-bottom: 6px;
+}
+
+.v2-proposal .v2-ledger-row {
+  border-bottom: 1px solid var(--v2-line-light);
+}
+
+.v2-proposal .v2-ledger-label {
+  color: var(--v2-quiet-light-aa);
+}
+
+.v2-proposal .v2-ledger-value {
+  color: var(--v2-ink-light);
+}
+
+.v2-proposal .v2-figure {
+  color: var(--v2-amber);
+}
+
+/* Uncertainty stays a separate block, not an impact line. */
+.v2-uncertainty {
+  margin-top: 14px;
+  border: 1px solid rgba(196, 129, 47, 0.32);
+  border-left: 2px solid var(--v2-amber);
+  border-radius: var(--v2-radius);
+  background: var(--v2-panel-dark-raised);
+  padding: 12px 14px;
+}
+
+.v2-uncertainty .v2-region-label {
+  margin-bottom: 8px;
+  color: var(--v2-amber);
+}
+
+.v2-uncertainty-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: baseline;
+}
+
+.v2-uncertainty-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--v2-quiet-light-aa);
+}
+
+.v2-uncertainty-value {
+  font-size: 14px;
+  color: var(--v2-ink-light);
+}
+
+/* ============================================================
+   UNDERSTANDING COMPARISON
+   Layout geometry stays governed by the base .understanding-pair
+   rules so the tested breakpoints are unchanged.
+   ============================================================ */
+
+.v2-comparison {
+  border-top: 1px solid var(--v2-line-light);
+  padding-top: 18px;
+}
+
+.v2-comparison-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.v2-comparison .v2-region-label {
+  color: var(--v2-quiet-light-aa);
+}
+
+.v2-comparison-note {
+  font-size: 13px;
+  color: var(--v2-quiet-light-aa);
+  margin: 0 0 14px 0;
+}
+
+.v2-shell .understanding-pair {
+  margin-top: 0;
+}
+
+.v2-shell .understanding-column {
+  padding: 0 24px;
+  background: transparent;
+  border-top: none;
+}
+
+.v2-shell .understanding-column:first-child {
+  padding-left: 0;
+  padding-right: 24px;
+}
+
+.v2-shell .understanding-column:last-child {
+  padding-left: 24px;
+  padding-right: 0;
+}
+
+.v2-shell .understanding-label {
+  font-family: var(--v2-sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--v2-quiet-light-aa);
+  margin: 0 0 10px 0;
+  padding-left: 30px;
+}
+
+.v2-shell .understanding-text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--v2-ink-light);
+  margin: 0;
+  padding-left: 30px;
+}
+
+.v2-shell .difference-tick {
+  top: 0.35em;
+  width: 20px;
+  height: 2px;
+  background: var(--v2-rust);
+}
+
+.v2-shell .understanding-column:last-child .difference-tick {
+  left: 24px;
+}
+
+/* Central difference marker sits on the divider. */
+.v2-shell .understanding-divider {
+  position: relative;
+  width: 2px;
+  background: var(--v2-line-light);
+}
+
+.v2-shell .understanding-divider::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--v2-shell);
+  border: 2px solid var(--v2-rust);
+}
+
+/* ============================================================
+   STATE FOOTER
+   ============================================================ */
+
+.v2-footer {
+  border-top: 1px solid var(--v2-line-light);
+  padding-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.v2-shell .state-line {
+  margin: 0;
+  max-width: none;
+  font-family: var(--v2-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--v2-quiet-light-aa);
+  min-width: 0;
+  flex: 1 1 320px;
+}
+
+.v2-shell .state-line:focus-visible {
+  outline: 2px solid var(--v2-amber);
+  outline-offset: 2px;
+}
+
+.v2-shell .state-tick {
+  background: var(--v2-rust);
+}
+
+.v2-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.v2-action {
+  font-family: var(--v2-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  min-height: 44px;
+  padding: 12px 18px;
+  border-radius: var(--v2-radius);
+  border: 1px solid var(--v2-line-light);
+  background: transparent;
+  color: var(--v2-quiet-light-aa);
+  cursor: pointer;
+  transition: color var(--v2-motion) var(--v2-ease),
+    border-color var(--v2-motion) var(--v2-ease),
+    background-color var(--v2-motion) var(--v2-ease);
+}
+
+.v2-action:hover {
+  color: var(--v2-ink-light);
+  border-color: var(--v2-quiet-light);
+}
+
+.v2-action:focus-visible {
+  outline: 2px solid var(--v2-amber);
+  outline-offset: 2px;
+}
+
+.v2-action-primary {
+  border-color: var(--v2-rust);
+  color: var(--v2-ink-light);
+  background: rgba(154, 62, 38, 0.22);
+}
+
+.v2-action-primary:hover {
+  background: rgba(154, 62, 38, 0.34);
+  border-color: var(--v2-amber);
+}
+
+/* ============================================================
+   TABLET — 768 to 1023
+   Canvas keeps its three columns; the pair stacks (base rules).
+   ============================================================ */
+
+@media (max-width: 1023px) {
+  .v2-body {
+    grid-template-columns: 148px minmax(0, 1fr);
+  }
+
+  .v2-canvas {
+    grid-template-columns: minmax(0, 1fr) 52px minmax(0, 1fr);
+  }
+
+  .v2-shell .understanding-column,
+  .v2-shell .understanding-column:first-child,
+  .v2-shell .understanding-column:last-child {
+    padding: 0;
+  }
+
+  .v2-shell .understanding-column:last-child {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--v2-line-light);
+  }
+
+  .v2-shell .understanding-column:last-child .difference-tick {
+    left: 0;
+    top: calc(18px + 0.35em);
+  }
+}
+
+/* ============================================================
+   MOBILE — below 768
+   ============================================================ */
+
+@media (max-width: 767px) {
+  .v2-topbar {
+    padding: 10px 16px;
+    gap: 10px 14px;
+  }
+
+  .v2-brand {
+    font-size: 17px;
+  }
+
+  .v2-context {
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  .v2-utilities {
+    margin-left: auto;
+  }
+
+  /* The rail is the product on mobile; the section list is not. */
+  .v2-nav {
+    display: none;
+  }
+
+  .v2-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .v2-main {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .v2-canvas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .v2-agreement,
+  .v2-proposal {
+    padding: 16px;
+    border-radius: var(--v2-radius);
+  }
+
+  .v2-proposal {
+    border-left: 1px solid var(--v2-line-light);
+  }
+
+  .v2-doc-title {
+    font-size: 21px;
+  }
+
+  .v2-ledger-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+    padding: 9px 0;
+  }
+
+  /* Rail turns horizontal and keeps the 2px line as the true boundary. */
+  .v2-rail {
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+    min-height: 52px;
+    background: linear-gradient(
+      to bottom,
+      rgba(154, 62, 38, 0) 0%,
+      rgba(154, 62, 38, 0.16) 45%,
+      rgba(154, 62, 38, 0.16) 55%,
+      rgba(154, 62, 38, 0) 100%
+    );
+  }
+
+  .v2-shell .agreement-boundary {
+    top: 50%;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    width: auto;
+    height: 2px;
+    background: linear-gradient(
+      to right,
+      rgba(154, 62, 38, 0.35) 0%,
+      var(--v2-rust) 12%,
+      var(--v2-amber) 50%,
+      var(--v2-rust) 88%,
+      rgba(154, 62, 38, 0.35) 100%
+    );
+  }
+
+  .v2-rail-label {
+    writing-mode: horizontal-tb;
+    text-orientation: initial;
+    transform: none;
+    padding: 3px 10px;
+    letter-spacing: 0.16em;
+  }
+
+  .v2-rail-lock {
+    width: 24px;
+    height: 24px;
+  }
+
+  .v2-comparison {
+    padding-top: 14px;
+  }
+
+  .v2-footer {
+    padding-top: 14px;
+    gap: 12px;
+  }
+
+  .v2-actions {
+    width: 100%;
+  }
+
+  .v2-action {
+    flex: 1 1 auto;
+  }
+}
