@@ -4,6 +4,7 @@ import {
   day14Reducer,
   day14InitialState,
 } from "./day14Reducer";
+import type { Day14State } from "./day14Types";
 import * as DATA from "./day14Data";
 import { DifferentUnderstandingsV2 } from "./v2/DifferentUnderstandingsV2";
 import { ClientReviewUnexpressedV2 } from "./v2/ClientReviewUnexpressedV2";
@@ -15,9 +16,25 @@ function App() {
   const [state, dispatch] = useReducer(day14Reducer, day14InitialState);
   const stateLineRef = useRef<HTMLDivElement>(null);
 
-  // Focus management: restore focus to state-line if active control was removed
+  // Focus management: restore focus to the state line when a real transition
+  // removes the control that had it.
+  //
+  // The guard tracks the previous state rather than a "has mounted" flag so it
+  // stays correct under StrictMode, which invokes effects twice on mount: a
+  // boolean flag would be consumed by the first invocation and let the second
+  // one steal focus on the landing screen.
+  const previousStateRef = useRef<Day14State | null>(null);
+
   useEffect(() => {
-    const activeEl = document.activeElement as HTMLElement;
+    const previousState = previousStateRef.current;
+    previousStateRef.current = state;
+
+    // No transition has happened yet, so there is nothing to restore.
+    if (previousState === null || previousState === state) {
+      return;
+    }
+
+    const activeEl = document.activeElement as HTMLElement | null;
     if (
       activeEl === document.body ||
       (activeEl && !activeEl.isConnected)
