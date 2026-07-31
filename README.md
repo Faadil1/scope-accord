@@ -1,78 +1,76 @@
 # Scope Accord
 
-Scope Accord is a five-state interaction prototype that keeps a proposed
-scope change outside the current agreement until both parties express the
-same understanding of its impact.
+Scope Accord is a five-state interaction prototype that keeps a proposed scope
+change outside the current agreement until both parties express the same
+understanding of its impact.
 
 > A proposed change stays outside the agreement until both sides mean the same
 > thing.
 
-This is a clean implementation of the SAFE — The Structural Grid spike, implementing two states of the visual contract:
+## The problem
 
-- **Different Understandings**: Proposal side-by-side with agreement, separated by a 2px boundary
-- **Shared Understanding**: Proposal integrated into agreement structure
+During an active service project, an informal addition can produce two different
+interpretations. The client may believe the request is already included, while
+the provider understands it as additional scope, cost and time.
 
-## Setup
+Scope Accord makes that boundary visible before the proposed change becomes part
+of the current agreement.
 
-```bash
-npm install
+## The mechanism
+
+The product displays:
+
+- the current agreement;
+- the proposed change;
+- the provider-stated impact;
+- any unresolved uncertainty;
+- the provider’s expressed understanding;
+- the client’s understanding or response;
+- whether both expressions currently match.
+
+A proposed change remains outside the current agreement until both sides express
+the same understanding of its impact.
+
+Scope Accord does not determine legal validity, truth, consent, liability or
+contractual enforceability.
+
+## Five states
+
+1. **Provider Capture**  
+   The provider records the request and its expected impact.
+
+2. **Client Review — Not Yet Expressed**  
+   The client can review the proposal but has not yet expressed an understanding.
+
+3. **Different Understandings**  
+   Both interpretations are shown with equal visual authority while the proposal
+   remains outside the current agreement.
+
+4. **Shared Understanding**  
+   The proposal becomes visibly integrated into the current agreement because the
+   two expressed understandings match.
+
+5. **Declined**  
+   The client does not want to add the proposed change, so it remains outside the
+   current agreement.
+
+## Scenario
+
+Corporate launch event:
+
+- Request: add a photo booth
+- Additional cost: $2,000
+- Additional venue access: 90 minutes
+- Floor-plan revision required
+- Venue access status not yet confirmed
+
+## Interaction flow
+
+```text
+Provider Capture
+→ Client Review
+→ Shared Understanding
+  or Different Understandings
+  or Declined
+→ Reset Demo
 ```
-
-## Development
-
-```bash
-npm run dev
-```
-
-The app will start at `http://localhost:5173`. A developer-only toggle (labeled "DEMO CONTROL — NOT PRODUCT UI") allows switching between states and content-ratio fixtures (1:1, 1:3, 3:1).
-
-## Production Build
-
-```bash
-npm run build
-```
-
-Artifacts will be created in `dist/`.
-
-## Tests
-
-```bash
-npm test
-```
-
-This runs all Playwright tests and generates screenshots in `artifacts/` directory. Tests measure:
-
-- DOM structure and nesting
-- Boundary presence and height spanning
-- Understanding column visibility and order
-- State transitions
-- Responsive layout at multiple viewports
-- Motion and accessibility contracts
-
-## Tech Stack
-
-- React 19
-- TypeScript 6
-- Vite 8
-- Playwright (testing)
-- Plain CSS Grid
-
-No libraries beyond the core stack. No Tailwind, Framer Motion, GSAP, or component libraries.
-
-## Key Features Implemented
-
-✅ Two-state interface (different_understandings, shared_understanding)
-✅ 12-column CSS Grid with 58/42 ratio on desktop
-✅ 2px boundaries and dividers as specified
-✅ Complete color and typography tokens
-✅ Reduced-motion support (0ms transitions)
-✅ Accessibility: semantic HTML, aria-live regions, 44px touch targets
-✅ Three content fixtures: 1:1, 1:3, 3:1 ratio support
-✅ Responsive: desktop (1440px), tablet (1024px), mobile (390px)
-✅ Developer-only control panel (not in product markup)
-✅ Playwright tests with real DOM measurements
-✅ Screenshot generation at all viewports
-
-## Specification
-
-See `day14-visual-contract-safe.md` for the complete visual contract that governs this implementation.
