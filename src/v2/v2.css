@@ -1,37 +1,48 @@
 /* ============================================================
-   SCOPE ACCORD V2.1 — TOKEN LAYER
-   Phase 1 scope: different_understandings only.
+   SCOPE ACCORD V2.1.1 — IVORY VISUAL SYSTEM
+   Phase scope: different_understandings only.
    ============================================================ */
 
 :root {
-  /* Surfaces */
-  --v2-shell: #0d0d0c;
-  --v2-panel-dark: #151412;
-  --v2-panel-dark-raised: #1c1a17;
-  --v2-paper: #eee7dc;
-  --v2-paper-deep: #dfd5c7;
+  /* Ivory environment */
+  --v2-ivory-canvas: #f3ede2;
+  --v2-ivory-paper: #f7f1e7;
+  --v2-ivory-dense: #eae1d3;
+  --v2-ivory-muted: #ddd1c1;
 
-  /* Ink */
-  --v2-ink-light: #f1eadf;
-  --v2-ink-dark: #191714;
-  --v2-quiet-light: rgba(241, 234, 223, 0.62);
-  --v2-quiet-dark: rgba(25, 23, 20, 0.6);
+  /* Espresso anchors */
+  --v2-espresso: #17130f;
+  --v2-espresso-raised: #211a15;
+  --v2-ink-dark: #17130f;
+  --v2-ink-soft: #2a211b;
 
-  /* Contrast-safe text variants. The base quiet tokens sit below 4.5:1 for
-     body text, so they carry hairlines and ornament while these carry text. */
-  --v2-quiet-light-aa: rgba(241, 234, 223, 0.78);
-  --v2-quiet-dark-aa: rgba(25, 23, 20, 0.76);
-
-  /* Signal */
-  --v2-rust: #9a3e26;
-  --v2-amber: #c4812f;
-  --v2-sage: #76806b;
+  /* Labels */
+  --v2-label-dark: #665747;
+  --v2-label-light: #d8ccbd;
 
   /* Lines */
-  --v2-line-light: rgba(241, 234, 223, 0.18);
-  --v2-line-dark: rgba(25, 23, 20, 0.18);
-  --v2-line-dark-soft: rgba(25, 23, 20, 0.055);
-  --v2-line-light-soft: rgba(241, 234, 223, 0.05);
+  --v2-line-warm: #b8aa97;
+  --v2-line-soft: #cfc3b4;
+  --v2-line-dark: rgba(23, 19, 15, 0.2);
+  --v2-line-light: rgba(247, 241, 231, 0.2);
+  --v2-rule-ghost-dark: rgba(23, 19, 15, 0.055);
+  --v2-rule-ghost-light: rgba(247, 241, 231, 0.06);
+
+  /* Signal */
+  --v2-copper: #c9821e;
+  --v2-copper-deep: #a85e12;
+  --v2-rust: #8f4a2e;
+  --v2-sage: #6f7865;
+
+  /* Aliases so older rule names stay meaningful */
+  --v2-shell: var(--v2-ivory-canvas);
+  --v2-panel-dark: var(--v2-espresso);
+  --v2-panel-dark-raised: var(--v2-espresso-raised);
+  --v2-paper: var(--v2-ivory-paper);
+  --v2-ink-light: var(--v2-ivory-paper);
+  --v2-quiet-light-aa: var(--v2-label-light);
+  --v2-quiet-dark-aa: var(--v2-label-dark);
+  --v2-amber: var(--v2-copper);
 
   /* Type */
   --v2-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
@@ -47,14 +58,21 @@
 }
 
 /* ============================================================
-   SHELL
+   SHELL — ivory environment
    ============================================================ */
 
 .v2-shell {
   width: 100%;
   min-height: 100vh;
-  background: var(--v2-shell);
-  color: var(--v2-ink-light);
+  background-color: var(--v2-ivory-canvas);
+  /* Restrained tonal shift so the canvas is not one flat beige plane. */
+  background-image: radial-gradient(
+    118% 82% at 76% 0%,
+    rgba(247, 241, 231, 0.07) 0%,
+    rgba(247, 241, 231, 0) 58%,
+    rgba(184, 170, 151, 0.06) 100%
+  );
+  color: var(--v2-ink-dark);
   font-family: var(--v2-sans);
   /* The app scaffold centres #root; documents read left-aligned. */
   text-align: left;
@@ -62,28 +80,25 @@
   flex-direction: column;
 }
 
-/* Shared eyebrow: the one label style across every region. */
+/* Shared eyebrow: one functional label style across every region. */
 .v2-eyebrow {
   font-family: var(--v2-sans);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--v2-quiet-light-aa);
+  color: var(--v2-label-dark);
   margin: 0;
 }
 
+/* Regions on espresso invert the label tone. */
+.v2-proposal .v2-eyebrow,
+.v2-comparison .v2-eyebrow {
+  color: var(--v2-label-light);
+}
+
 .v2-eyebrow-signal {
-  color: var(--v2-amber);
-}
-
-.v2-eyebrow-quiet {
-  color: var(--v2-quiet-dark-aa);
-}
-
-/* Eyebrows inside the paper region invert to dark ink. */
-.v2-agreement .v2-eyebrow {
-  color: var(--v2-quiet-dark-aa);
+  color: var(--v2-copper);
 }
 
 /* ---------- Top bar ---------- */
@@ -94,8 +109,7 @@
   gap: 18px;
   padding: 0 22px;
   min-height: 54px;
-  background: var(--v2-panel-dark);
-  border-bottom: 1px solid var(--v2-line-light);
+  background: var(--v2-espresso);
   flex-wrap: wrap;
 }
 
@@ -112,14 +126,14 @@
   letter-spacing: 0.005em;
   line-height: 1;
   margin: 0;
-  color: var(--v2-ink-light);
+  color: var(--v2-ivory-paper);
   white-space: nowrap;
 }
 
 .v2-brand-rule {
   width: 2px;
   height: 20px;
-  background: var(--v2-rust);
+  background: var(--v2-copper);
   flex: none;
 }
 
@@ -129,7 +143,7 @@
   gap: 10px;
   min-width: 0;
   font-size: 12px;
-  color: var(--v2-quiet-light-aa);
+  color: var(--v2-label-light);
 }
 
 .v2-context-project {
@@ -140,7 +154,7 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: var(--v2-quiet-light);
+  background: var(--v2-line-warm);
   flex: none;
 }
 
@@ -148,7 +162,7 @@
   font-family: var(--v2-mono);
   font-size: 11px;
   letter-spacing: 0.04em;
-  color: var(--v2-quiet-light-aa);
+  color: var(--v2-copper);
 }
 
 .v2-utilities {
@@ -160,28 +174,28 @@
 /* Quiet by default so it does not compete with the product identity. */
 .v2-shell .control-button.v2-utility {
   font-family: var(--v2-sans);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   min-height: 44px;
   padding: 8px 12px;
   border-radius: var(--v2-radius);
   border: 1px solid transparent;
   background: transparent;
-  color: var(--v2-quiet-light);
+  color: var(--v2-label-light);
   transition: color var(--v2-motion) var(--v2-ease),
     border-color var(--v2-motion) var(--v2-ease);
 }
 
 .v2-shell .control-button.v2-utility:hover {
-  color: var(--v2-ink-light);
+  color: var(--v2-ivory-paper);
   border-color: var(--v2-line-light);
   background: transparent;
 }
 
 .v2-shell .control-button.v2-utility:focus-visible {
-  outline: 2px solid var(--v2-amber);
+  outline: 2px solid var(--v2-copper);
   outline-offset: 2px;
 }
 
@@ -195,9 +209,8 @@
 }
 
 .v2-nav {
-  border-right: 1px solid var(--v2-line-light);
   padding: 22px 0;
-  background: var(--v2-panel-dark);
+  background: var(--v2-espresso);
 }
 
 .v2-nav-list {
@@ -219,32 +232,32 @@
   font-family: var(--v2-mono);
   font-size: 11px;
   letter-spacing: 0.04em;
-  color: var(--v2-quiet-light);
+  color: var(--v2-line-warm);
 }
 
 .v2-nav-label {
   font-size: 13px;
   letter-spacing: 0.01em;
-  color: var(--v2-quiet-light-aa);
+  color: var(--v2-label-light);
 }
 
 .v2-nav-item-active {
-  border-left-color: var(--v2-rust);
-  background: var(--v2-panel-dark-raised);
+  border-left-color: var(--v2-copper);
+  background: var(--v2-espresso-raised);
 }
 
 .v2-nav-item-active .v2-nav-label {
-  color: var(--v2-ink-light);
+  color: var(--v2-ivory-paper);
   font-weight: 600;
 }
 
 .v2-nav-item-active .v2-nav-index {
-  color: var(--v2-amber);
+  color: var(--v2-copper);
 }
 
 .v2-main {
   min-width: 0;
-  padding: 20px 22px;
+  padding: 22px 26px 24px 26px;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -282,16 +295,20 @@
 }
 
 .v2-doc-sub {
-  font-size: 13px;
-  margin: 5px 0 0 0;
+  font-family: var(--v2-sans);
+  font-size: 15px;
+  line-height: 1.4;
+  margin: 6px 0 0 0;
 }
 
-/* ---------- Left region: current agreement on warm paper ---------- */
+/* ---------- Left region: current agreement on ivory paper ---------- */
 
 .v2-agreement {
-  background: var(--v2-paper);
+  background-color: var(--v2-ivory-paper);
   color: var(--v2-ink-dark);
   padding: 20px 24px 16px 24px;
+  border: 1px solid var(--v2-line-soft);
+  border-right: none;
   border-radius: var(--v2-radius) 0 0 var(--v2-radius);
   min-width: 0;
   display: flex;
@@ -299,12 +316,13 @@
   /* Quiet ruled ground so short content still reads as a document page. */
   background-image: repeating-linear-gradient(
     to bottom,
-    var(--v2-line-dark-soft) 0,
-    var(--v2-line-dark-soft) 1px,
+    var(--v2-rule-ghost-dark) 0,
+    var(--v2-rule-ghost-dark) 1px,
     transparent 1px,
     transparent 32px
   );
   background-position: 0 96px;
+  box-shadow: 0 1px 6px rgba(23, 19, 15, 0.05);
 }
 
 .v2-agreement .v2-doc-head {
@@ -312,14 +330,14 @@
 }
 
 .v2-agreement .v2-doc-sub {
-  color: var(--v2-quiet-dark-aa);
+  color: var(--v2-label-dark);
 }
 
 /* Compact facts band */
 .v2-facts {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-  border-bottom: 1px solid var(--v2-line-dark);
+  border-bottom: 1px solid var(--v2-line-warm);
 }
 
 .v2-fact {
@@ -327,7 +345,7 @@
   flex-direction: column;
   gap: 5px;
   padding: 13px 16px 13px 0;
-  border-right: 1px solid var(--v2-line-dark);
+  border-right: 1px solid var(--v2-line-soft);
 }
 
 .v2-fact:last-child {
@@ -339,19 +357,26 @@
 }
 
 .v2-fact-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--v2-quiet-dark-aa);
+  color: var(--v2-label-dark);
 }
 
+/* Sans by default; monospace only where a figure opts in. */
 .v2-fact-value {
+  font-family: var(--v2-sans);
+  font-size: 16px;
+  line-height: 1.35;
+  color: var(--v2-ink-dark);
+}
+
+.v2-fact-figure {
   font-family: var(--v2-mono);
   font-size: 17px;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
-  color: var(--v2-ink-dark);
 }
 
 /* Commitment register */
@@ -371,23 +396,23 @@
   gap: 12px;
   align-items: baseline;
   padding: 9px 0;
-  border-bottom: 1px solid var(--v2-line-dark);
+  border-bottom: 1px solid var(--v2-line-soft);
 }
 
 .v2-register-item:first-child {
-  border-top: 1px solid var(--v2-line-dark);
+  border-top: 1px solid var(--v2-line-soft);
 }
 
 .v2-register-index {
   font-family: var(--v2-mono);
   font-size: 11px;
-  color: var(--v2-quiet-dark-aa);
+  color: var(--v2-line-warm);
 }
 
 .v2-register-text {
   font-size: 15px;
   line-height: 1.4;
-  color: var(--v2-ink-dark);
+  color: var(--v2-ink-soft);
 }
 
 /* Folio marker anchors the page base. */
@@ -401,13 +426,13 @@
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--v2-quiet-dark-aa);
+  color: var(--v2-label-dark);
 }
 
 .v2-folio-rule {
   flex: 1;
   height: 1px;
-  background: var(--v2-line-dark);
+  background: var(--v2-line-soft);
 }
 
 .v2-folio-index {
@@ -426,11 +451,11 @@
   gap: 16px;
   background: linear-gradient(
     to right,
-    rgba(154, 62, 38, 0) 0%,
-    rgba(154, 62, 38, 0.1) 32%,
-    rgba(196, 129, 47, 0.16) 50%,
-    rgba(154, 62, 38, 0.1) 68%,
-    rgba(154, 62, 38, 0) 100%
+    rgba(168, 94, 18, 0) 0%,
+    rgba(168, 94, 18, 0.07) 34%,
+    rgba(201, 130, 30, 0.13) 50%,
+    rgba(168, 94, 18, 0.07) 66%,
+    rgba(168, 94, 18, 0) 100%
   );
   transition: background var(--v2-motion-slow) var(--v2-ease);
 }
@@ -468,34 +493,34 @@
   margin: 0;
   background: linear-gradient(
     to bottom,
-    rgba(154, 62, 38, 0.4) 0%,
-    var(--v2-rust) 14%,
-    var(--v2-amber) 50%,
-    var(--v2-rust) 86%,
-    rgba(154, 62, 38, 0.4) 100%
+    var(--v2-copper-deep) 0%,
+    var(--v2-copper) 50%,
+    var(--v2-copper-deep) 100%
   );
-  /* Controlled inner glow, not a neon halo. */
-  box-shadow: 0 0 6px rgba(196, 129, 47, 0.34);
+  /* Controlled warm glow, capped at 6px. */
+  box-shadow: 0 0 6px rgba(168, 94, 18, 0.3);
 }
 
+/* Espresso chips keep the label legible while crossing the ivory canvas. */
 .v2-rail-label,
 .v2-rail-lock {
   position: relative;
   z-index: 1;
-  background: var(--v2-shell);
+  background: var(--v2-espresso);
 }
 
 .v2-rail-label {
   writing-mode: vertical-rl;
   text-orientation: mixed;
   transform: rotate(180deg);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--v2-amber);
-  padding: 16px 4px;
+  color: var(--v2-ivory-paper);
+  padding: 16px 5px;
   white-space: nowrap;
+  border-radius: var(--v2-radius);
 }
 
 .v2-rail-lock {
@@ -504,9 +529,9 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border: 1px solid var(--v2-rust);
+  border: 1px solid var(--v2-copper-deep);
   border-radius: var(--v2-radius);
-  color: var(--v2-amber);
+  color: var(--v2-copper);
   flex: none;
 }
 
@@ -514,13 +539,11 @@
   display: block;
 }
 
-/* ---------- Right region: proposed change on dark surface ---------- */
+/* ---------- Right region: proposed change on espresso ---------- */
 
 .v2-proposal {
-  background: var(--v2-panel-dark);
-  border: 1px solid var(--v2-line-light);
-  border-left: none;
-  color: var(--v2-ink-light);
+  background-color: var(--v2-espresso-raised);
+  color: var(--v2-ivory-paper);
   padding: 20px 24px 16px 24px;
   border-radius: 0 var(--v2-radius) var(--v2-radius) 0;
   min-width: 0;
@@ -529,8 +552,8 @@
   /* Matching ruled ground so the panel base reads as document page, not a void. */
   background-image: repeating-linear-gradient(
     to bottom,
-    var(--v2-line-light-soft) 0,
-    var(--v2-line-light-soft) 1px,
+    var(--v2-rule-ghost-light) 0,
+    var(--v2-rule-ghost-light) 1px,
     transparent 1px,
     transparent 32px
   );
@@ -539,6 +562,10 @@
 
 .v2-proposal .v2-doc-head {
   border-bottom: 2px solid var(--v2-line-light);
+}
+
+.v2-proposal .v2-doc-title {
+  color: var(--v2-ivory-paper);
 }
 
 /* Two dominant numeric impacts */
@@ -561,7 +588,7 @@
 }
 
 .v2-proposal .v2-fact-label {
-  color: var(--v2-quiet-light-aa);
+  color: var(--v2-label-light);
 }
 
 .v2-figure-lg {
@@ -570,7 +597,8 @@
   line-height: 1;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
-  color: var(--v2-amber);
+  color: var(--v2-copper);
+  white-space: nowrap;
 }
 
 .v2-impact-note {
@@ -582,18 +610,19 @@
 }
 
 .v2-impact-note-value {
+  font-family: var(--v2-sans);
   font-size: 15px;
   line-height: 1.4;
-  color: var(--v2-ink-light);
+  color: var(--v2-ivory-paper);
 }
 
 /* Uncertainty stays a separate section, not an impact line. */
 .v2-uncertainty {
   margin: auto 0 0 0;
-  border: 1px solid rgba(196, 129, 47, 0.3);
-  border-left: 2px solid var(--v2-amber);
+  border: 1px solid rgba(201, 130, 30, 0.28);
+  border-left: 2px solid var(--v2-copper);
   border-radius: var(--v2-radius);
-  background: var(--v2-panel-dark-raised);
+  background: rgba(201, 130, 30, 0.06);
   padding: 13px 15px;
 }
 
@@ -605,19 +634,23 @@
 }
 
 .v2-uncertainty-value {
+  font-family: var(--v2-sans);
   font-size: 15px;
-  color: var(--v2-ink-light);
+  color: var(--v2-ivory-paper);
 }
 
 /* ============================================================
-   DIVERGENCE — the second major moment
+   DIVERGENCE — espresso interpretation band
    Layout geometry stays governed by the base .understanding-pair rules
    so the tested breakpoints are unchanged.
    ============================================================ */
 
 .v2-comparison {
-  border-top: 1px solid var(--v2-line-light);
-  padding-top: 16px;
+  background: var(--v2-espresso);
+  color: var(--v2-ivory-paper);
+  /* Spans the content column; ivory gutters frame it as an editorial band. */
+  border-radius: var(--v2-radius);
+  padding: 18px 24px 20px 24px;
 }
 
 .v2-comparison-head {
@@ -638,39 +671,35 @@
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--v2-quiet-light);
+  color: var(--v2-line-warm);
 }
 
+/* Geometric "not equal": two rules cut by one diagonal. */
 .v2-annotation-break {
   position: relative;
-  width: 16px;
-  height: 7px;
+  width: 15px;
+  height: 8px;
   flex: none;
-}
-
-/* Geometric "not equal": two rules with a break through them. */
-.v2-annotation-break::before,
-.v2-annotation-break::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: var(--v2-quiet-light);
+  border-top: 1px solid var(--v2-line-warm);
+  border-bottom: 1px solid var(--v2-line-warm);
 }
 
 .v2-annotation-break::before {
-  top: 0;
-}
-
-.v2-annotation-break::after {
-  bottom: 0;
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1px;
+  height: 15px;
+  transform: translate(-50%, -50%) rotate(32deg);
+  background: var(--v2-line-warm);
 }
 
 .v2-comparison-note {
-  font-size: 14px;
-  color: var(--v2-quiet-light-aa);
-  margin: 9px 0 14px 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--v2-label-light);
+  margin: 9px 0 16px 0;
 }
 
 .v2-shell .understanding-pair {
@@ -695,13 +724,13 @@
 
 .v2-shell .understanding-label {
   font-family: var(--v2-sans);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--v2-quiet-light-aa);
+  color: var(--v2-label-light);
   margin: 0 0 12px 0;
-  padding-left: 32px;
+  padding-left: 34px;
 }
 
 /* Emphasis pull-out; never replaces the statement below it. */
@@ -709,40 +738,42 @@
   font-family: var(--v2-serif);
   font-size: 20px;
   line-height: 1.25;
-  color: var(--v2-ink-light);
+  color: var(--v2-ivory-paper);
   margin: 0 0 7px 0;
-  padding-left: 32px;
+  padding-left: 34px;
 }
 
 .v2-shell .understanding-text {
+  font-family: var(--v2-sans);
   font-size: 15px;
   line-height: 1.5;
-  color: var(--v2-quiet-light-aa);
+  color: var(--v2-label-light);
   margin: 0;
-  padding-left: 32px;
+  padding-left: 34px;
 }
 
+/* One party marker per region. */
 .v2-shell .difference-tick {
-  top: 0.3em;
+  top: 0.25em;
   width: 22px;
   height: 2px;
-  background: var(--v2-rust);
+  background: var(--v2-copper);
 }
 
 .v2-shell .understanding-column:last-child .difference-tick {
   left: 26px;
 }
 
-/* Divergence spine */
+/* Divergence spine (side-by-side layout only) */
 .v2-shell .understanding-divider {
   position: relative;
   width: 2px;
   background: linear-gradient(
     to bottom,
-    rgba(241, 234, 223, 0) 0%,
-    var(--v2-line-light) 18%,
-    var(--v2-line-light) 82%,
-    rgba(241, 234, 223, 0) 100%
+    rgba(184, 170, 151, 0) 0%,
+    rgba(184, 170, 151, 0.42) 18%,
+    rgba(184, 170, 151, 0.42) 82%,
+    rgba(184, 170, 151, 0) 100%
   );
 }
 
@@ -755,7 +786,7 @@
   width: 15px;
   height: 9px;
   transform: translate(-50%, -50%);
-  background: var(--v2-shell);
+  background: var(--v2-espresso);
   border-top: 2px solid var(--v2-rust);
   border-bottom: 2px solid var(--v2-rust);
 }
@@ -768,16 +799,16 @@
   width: 2px;
   height: 22px;
   transform: translate(-50%, -50%) rotate(32deg);
-  background: var(--v2-amber);
+  background: var(--v2-copper);
 }
 
 /* ============================================================
-   STATE CONCLUSION
+   STATE CONCLUSION — returns to ivory
    ============================================================ */
 
 .v2-footer {
+  background: var(--v2-ivory-dense);
   border-top: 2px solid var(--v2-rust);
-  background: var(--v2-panel-dark);
   border-radius: 0 0 var(--v2-radius) var(--v2-radius);
   padding: 15px 20px;
   display: flex;
@@ -790,23 +821,33 @@
   font-family: var(--v2-sans);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.12em;
   line-height: 1.5;
   text-transform: uppercase;
-  color: var(--v2-ink-light);
+  color: var(--v2-ink-dark);
   min-width: 0;
   gap: 16px;
+  align-items: center;
 }
 
 .v2-shell .state-line:focus-visible {
-  outline: 2px solid var(--v2-amber);
+  outline: 2px solid var(--v2-rust);
   outline-offset: 2px;
 }
 
 .v2-shell .state-tick {
   width: 28px;
   height: 2px;
-  background: var(--v2-amber);
+  background: var(--v2-copper-deep);
+  flex: none;
+}
+
+.v2-shell .state-clause-primary {
+  font-weight: 700;
+}
+
+.v2-shell .state-clause-secondary {
+  color: var(--v2-ink-soft);
 }
 
 /* ============================================================
@@ -829,28 +870,43 @@
     padding: 0;
   }
 
+  /* One seam, one marker. The party tick stays at the left of each label so
+     it never reads as a second seam fragment. */
   .v2-shell .understanding-column:last-child {
-    margin-top: 18px;
-    padding-top: 20px;
+    position: relative;
+    margin-top: 22px;
+    padding-top: 24px;
     border-top: 1px solid var(--v2-line-light);
   }
 
   .v2-shell .understanding-column:last-child .difference-tick {
     left: 0;
-    top: calc(20px + 0.3em);
+    top: calc(24px + 0.25em);
   }
 
-  /* The spine is hidden when stacked, so the break moves to the seam. */
+  /* Single centred geometric mismatch marker sitting on the seam. */
   .v2-shell .understanding-column:last-child::before {
     content: "";
     position: absolute;
-    left: 0;
-    top: -5px;
-    width: 15px;
+    left: 50%;
+    top: 0;
+    width: 17px;
     height: 9px;
-    background: var(--v2-shell);
+    transform: translate(-50%, -50%);
+    background: var(--v2-espresso);
     border-top: 2px solid var(--v2-rust);
     border-bottom: 2px solid var(--v2-rust);
+  }
+
+  .v2-shell .understanding-column:last-child::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 2px;
+    height: 21px;
+    transform: translate(-50%, -50%) rotate(32deg);
+    background: var(--v2-copper);
   }
 }
 
@@ -879,7 +935,7 @@
 @media (max-width: 767px) {
   /* Two-level top bar: identity + reset, then context metadata. */
   .v2-topbar {
-    padding: 7px 14px 8px 14px;
+    padding: 6px 14px 7px 14px;
     gap: 5px 12px;
     min-height: 0;
   }
@@ -897,7 +953,7 @@
   .v2-context {
     order: 3;
     width: 100%;
-    font-size: 11px;
+    font-size: 12px;
     gap: 8px;
   }
 
@@ -907,7 +963,8 @@
 
   .v2-shell .control-button.v2-utility {
     padding: 8px 10px;
-    font-size: 11px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
   }
 
   /* The rail is the product on mobile; the section list is not. */
@@ -921,7 +978,7 @@
 
   .v2-main {
     padding: 12px;
-    gap: 9px;
+    gap: 8px;
   }
 
   .v2-canvas {
@@ -930,21 +987,25 @@
 
   .v2-agreement,
   .v2-proposal {
-    padding: 14px;
+    padding: 13px;
     border-radius: var(--v2-radius);
   }
 
-  .v2-proposal {
-    border-left: 1px solid var(--v2-line-light);
+  .v2-agreement {
+    border-right: 1px solid var(--v2-line-soft);
   }
 
   .v2-doc-title {
     font-size: 22px;
-    margin-top: 6px;
+    margin-top: 5px;
+  }
+
+  .v2-doc-sub {
+    font-size: 16px;
   }
 
   .v2-doc-head {
-    padding-bottom: 9px;
+    padding-bottom: 8px;
   }
 
   /* Compact two-column facts; scope stays full width. */
@@ -953,7 +1014,7 @@
   }
 
   .v2-fact {
-    padding: 9px 12px 9px 0;
+    padding: 8px 12px 8px 0;
   }
 
   .v2-facts .v2-fact + .v2-fact {
@@ -961,11 +1022,11 @@
   }
 
   .v2-register {
-    padding-top: 10px;
+    padding-top: 8px;
   }
 
   .v2-register-item {
-    padding: 7px 0;
+    padding: 6px 0;
   }
 
   .v2-register-text {
@@ -982,7 +1043,7 @@
   }
 
   .v2-impact-figure {
-    padding: 10px 10px 10px 0;
+    padding: 9px 10px 9px 0;
   }
 
   .v2-impact-figure + .v2-impact-figure {
@@ -990,7 +1051,11 @@
   }
 
   .v2-figure-lg {
-    font-size: 23px;
+    font-size: 22px;
+  }
+
+  .v2-impact-note {
+    padding: 10px 0;
   }
 
   .v2-impact-note-value,
@@ -998,13 +1063,9 @@
     font-size: 16px;
   }
 
-  .v2-impact-note {
-    padding: 11px 0;
-  }
-
   .v2-uncertainty {
-    margin-top: 10px;
-    padding: 11px 13px;
+    margin-top: 8px;
+    padding: 10px 13px;
   }
 
   /* Rail turns horizontal and keeps the 2px line as the true boundary. */
@@ -1012,14 +1073,14 @@
     flex-direction: row;
     justify-content: center;
     gap: 12px;
-    min-height: 46px;
+    min-height: 44px;
     background: linear-gradient(
       to bottom,
-      rgba(154, 62, 38, 0) 0%,
-      rgba(154, 62, 38, 0.1) 32%,
-      rgba(196, 129, 47, 0.16) 50%,
-      rgba(154, 62, 38, 0.1) 68%,
-      rgba(154, 62, 38, 0) 100%
+      rgba(168, 94, 18, 0) 0%,
+      rgba(168, 94, 18, 0.07) 34%,
+      rgba(201, 130, 30, 0.13) 50%,
+      rgba(168, 94, 18, 0.07) 66%,
+      rgba(168, 94, 18, 0) 100%
     );
   }
 
@@ -1050,11 +1111,9 @@
     height: 2px;
     background: linear-gradient(
       to right,
-      rgba(154, 62, 38, 0.4) 0%,
-      var(--v2-rust) 14%,
-      var(--v2-amber) 50%,
-      var(--v2-rust) 86%,
-      rgba(154, 62, 38, 0.4) 100%
+      var(--v2-copper-deep) 0%,
+      var(--v2-copper) 50%,
+      var(--v2-copper-deep) 100%
     );
   }
 
@@ -1062,9 +1121,9 @@
     writing-mode: horizontal-tb;
     text-orientation: initial;
     transform: none;
-    padding: 3px 10px;
-    font-size: 11px;
-    letter-spacing: 0.18em;
+    padding: 4px 10px;
+    font-size: 12px;
+    letter-spacing: 0.16em;
   }
 
   .v2-rail-lock {
@@ -1073,48 +1132,75 @@
   }
 
   .v2-comparison {
-    padding-top: 10px;
+    padding: 12px 13px 14px 13px;
   }
 
   .v2-comparison-note {
-    font-size: 15px;
-    margin: 6px 0 12px 0;
+    font-size: 16px;
+    margin: 6px 0 10px 0;
   }
 
   .v2-emphasis {
     font-size: 19px;
-    padding-left: 30px;
+    padding-left: 32px;
+    margin-bottom: 5px;
   }
 
   .v2-shell .understanding-label {
-    padding-left: 30px;
+    padding-left: 32px;
+    margin-bottom: 10px;
   }
 
   .v2-shell .understanding-text {
     font-size: 16px;
-    padding-left: 30px;
+    padding-left: 32px;
   }
 
   .v2-shell .understanding-column:last-child {
-    margin-top: 12px;
-    padding-top: 15px;
+    margin-top: 14px;
+    padding-top: 16px;
   }
 
   .v2-shell .understanding-column:last-child .difference-tick {
-    top: calc(15px + 0.3em);
+    top: calc(16px + 0.25em);
   }
 
-  .v2-shell .understanding-column:last-child::before {
-    top: -5px;
-  }
-
+  /* Conclusion: two semantic lines, one border, one tick. */
   .v2-footer {
     padding: 11px 14px;
+    align-items: flex-start;
   }
 
   .v2-shell .state-line {
-    font-size: 11px;
-    letter-spacing: 0.11em;
+    font-size: 12px;
+    letter-spacing: 0.04em;
     gap: 12px;
+    align-items: flex-start;
+  }
+
+  .v2-shell .state-tick {
+    margin-top: 7px;
+  }
+
+  .v2-shell .state-line-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .v2-shell .state-clause-primary {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Kept in the accessibility tree; removed only from view. */
+  .v2-shell .state-clause-separator {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }

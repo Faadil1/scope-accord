@@ -40,11 +40,22 @@ function LockMark() {
   );
 }
 
-function Fact({ label, value }: { label: string; value: string }) {
+/* Monospace is opt-in: it belongs to amounts, dates and durations only. */
+function Fact({
+  label,
+  value,
+  mono = false,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+}) {
   return (
     <div className="v2-fact">
       <span className="v2-fact-label">{label}</span>
-      <span className="v2-fact-value">{value}</span>
+      <span className={mono ? "v2-fact-value v2-fact-figure" : "v2-fact-value"}>
+        {value}
+      </span>
     </div>
   );
 }
@@ -142,10 +153,10 @@ export function DifferentUnderstandingsV2({
 
               <div className="v2-facts">
                 {items.includes("COST") && (
-                  <Fact label="Cost" value={DATA.CURRENT_AGREEMENT.cost} />
+                  <Fact label="Cost" value={DATA.CURRENT_AGREEMENT.cost} mono />
                 )}
                 {items.includes("DATE") && (
-                  <Fact label="Date" value={DATA.CURRENT_AGREEMENT.date} />
+                  <Fact label="Date" value={DATA.CURRENT_AGREEMENT.date} mono />
                 )}
                 {items.includes("VENUE") && (
                   <Fact label="Venue" value={DATA.CURRENT_AGREEMENT.venue} />

@@ -310,6 +310,12 @@ function App() {
     }
   };
 
+  // The status text carries two clauses joined by a separator. Splitting it
+  // into spans lets the conclusion present them on separate lines while the
+  // rendered string stays byte-identical to getStateText().
+  const [primaryClause, ...restClauses] = getStateText().split(" · ");
+  const secondaryClause = restClauses.join(" · ");
+
   // Single state-line instance so the focus ref and aria-live contract hold
   // in every state, including the V2 composition.
   const stateLine = (
@@ -322,7 +328,15 @@ function App() {
       tabIndex={-1}
     >
       <span className="state-tick" />
-      {getStateText()}
+      <span className="state-line-text">
+        <span className="state-clause-primary">{primaryClause}</span>
+        {secondaryClause && (
+          <>
+            <span className="state-clause-separator"> · </span>
+            <span className="state-clause-secondary">{secondaryClause}</span>
+          </>
+        )}
+      </span>
     </div>
   );
 
