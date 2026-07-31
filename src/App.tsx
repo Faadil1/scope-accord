@@ -7,6 +7,7 @@ import {
 import * as DATA from "./day14Data";
 import { DifferentUnderstandingsV2 } from "./v2/DifferentUnderstandingsV2";
 import { ClientReviewUnexpressedV2 } from "./v2/ClientReviewUnexpressedV2";
+import { ProviderCaptureV2 } from "./v2/ProviderCaptureV2";
 
 type ContentRatio = "1:1" | "1:3" | "3:1";
 
@@ -118,62 +119,6 @@ function App() {
     }
   };
 
-  const providerCapture = (
-    <div className="composition" data-testid="state-provider_capture">
-      <section className="agreement-section" data-testid="agreement-section">
-        {agreementContent}
-      </section>
-      <div className="agreement-boundary" data-testid="agreement-boundary" />
-      <section className="proposal-band" data-testid="proposal-band">
-        <h3 className="region-heading">PROVIDER CAPTURE</h3>
-        <h4 className="proposal-heading">{DATA.REQUEST.title}</h4>
-        <div style={{ marginBottom: "40px" }}>
-          <div className="group-label">{DATA.EXPECTED_IMPACT.heading}</div>
-          <div className="content-section">
-            {renderRow("COST", DATA.EXPECTED_IMPACT.cost, true)}
-            {renderRow("VENUE ACCESS", DATA.EXPECTED_IMPACT.venueAccess, true)}
-            {renderRow(
-              "DOCUMENTS AFFECTED",
-              DATA.EXPECTED_IMPACT.documentsAffected,
-              false
-            )}
-          </div>
-        </div>
-        <div>
-          <div className="group-label">{DATA.UNCERTAINTY.heading}</div>
-          <div className="content-section">
-            {renderRow(
-              "VENUE ACCESS STATUS",
-              DATA.UNCERTAINTY.venueAccessStatus,
-              false
-            )}
-          </div>
-        </div>
-        <div>
-          <div className="group-label">{DATA.RECORDED_BY.heading}</div>
-          <div className="content-section">
-            {renderRow("", DATA.RECORDED_BY.value, false)}
-          </div>
-        </div>
-        <div>
-          <div className="group-label">{DATA.RECORDED_AT.heading}</div>
-          <div className="content-section">
-            {renderRow("", DATA.RECORDED_AT.value, true)}
-          </div>
-        </div>
-        <div className="control-row">
-          <button
-            className="control-button"
-            data-testid="record-proposal"
-            onClick={() => dispatch({ type: "RECORD_PROPOSAL" })}
-          >
-            RECORD PROPOSAL
-          </button>
-        </div>
-      </section>
-    </div>
-  );
-
   const sharedUnderstanding = (
     <div data-testid="state-shared_understanding">
       <div
@@ -243,8 +188,6 @@ function App() {
 
   const renderState = () => {
     switch (state) {
-      case "provider_capture":
-        return providerCapture;
       case "shared_understanding":
         return sharedUnderstanding;
       case "declined":
@@ -283,6 +226,17 @@ function App() {
       </span>
     </div>
   );
+
+  if (state === "provider_capture") {
+    return (
+      <ProviderCaptureV2
+        ratio={ratio}
+        stateLine={stateLine}
+        onReset={() => dispatch({ type: "RESET_DEMO" })}
+        onRecordProposal={() => dispatch({ type: "RECORD_PROPOSAL" })}
+      />
+    );
+  }
 
   if (state === "different_understandings") {
     return (

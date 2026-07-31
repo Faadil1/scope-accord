@@ -1378,3 +1378,164 @@
     margin-bottom: 14px;
   }
 }
+
+
+/* ============================================================
+   V2.3 — PROVIDER CAPTURE
+   ============================================================ */
+
+/* Recording sits between locked and unexpressed: the gate is fully formed
+   while the record is being made. */
+.v2-rail-recording {
+  background: linear-gradient(
+    to right,
+    rgba(168, 94, 18, 0) 0%,
+    rgba(168, 94, 18, 0.06) 34%,
+    rgba(201, 130, 30, 0.11) 50%,
+    rgba(168, 94, 18, 0.06) 66%,
+    rgba(168, 94, 18, 0) 100%
+  );
+}
+
+/* ---------- Capture band ---------- */
+
+.v2-capture {
+  background: var(--v2-espresso);
+  color: var(--v2-ivory-paper);
+  border-radius: var(--v2-radius);
+  padding: 18px 24px 20px 24px;
+}
+
+.v2-capture .v2-eyebrow {
+  color: var(--v2-label-light);
+}
+
+.v2-capture .v2-comparison-head {
+  margin-bottom: 18px;
+}
+
+.v2-capture-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 32fr) 1px minmax(0, 68fr);
+  column-gap: 26px;
+  align-items: stretch;
+}
+
+.v2-capture-divider {
+  background: var(--v2-line-light);
+}
+
+/* ---------- Provenance: factual record, not identity proof ---------- */
+
+.v2-provenance {
+  margin: 0;
+}
+
+.v2-provenance-item + .v2-provenance-item {
+  margin-top: 16px;
+}
+
+.v2-provenance-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--v2-label-light);
+  margin: 0;
+}
+
+.v2-provenance-value {
+  font-family: var(--v2-sans);
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--v2-ivory-paper);
+  margin: 6px 0 0 0;
+}
+
+.v2-provenance-figure {
+  font-family: var(--v2-mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- The provider's expressed understanding ---------- */
+
+.v2-record-label {
+  font-family: var(--v2-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--v2-label-light);
+  margin: 0 0 12px 0;
+}
+
+.v2-record-emphasis {
+  padding-left: 0;
+  margin: 0 0 7px 0;
+}
+
+.v2-record-statement {
+  font-family: var(--v2-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--v2-label-light);
+  margin: 0;
+}
+
+/* ---------- Single recording action ---------- */
+
+.v2-action-single {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.v2-action-record {
+  min-height: 48px;
+  background: var(--v2-espresso);
+  color: var(--v2-ivory-paper);
+  border: 1px solid var(--v2-espresso);
+  /* One restrained copper leading rule. */
+  border-top: 2px solid var(--v2-copper);
+  white-space: nowrap;
+}
+
+.v2-action-record:hover {
+  background: var(--v2-espresso-raised);
+  border-color: var(--v2-espresso-raised);
+  border-top-color: var(--v2-copper);
+}
+
+@media (max-width: 767px) {
+  .v2-capture {
+    padding: 14px 13px 16px 13px;
+  }
+
+  .v2-capture .v2-comparison-head {
+    margin-bottom: 14px;
+  }
+
+  /* Provenance first, then the understanding, separated by one quiet rule. */
+  .v2-capture-grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 14px;
+    column-gap: 0;
+  }
+
+  .v2-capture-divider {
+    height: 1px;
+  }
+
+  .v2-provenance-item + .v2-provenance-item {
+    margin-top: 12px;
+  }
+
+  .v2-provenance-value {
+    font-size: 16px;
+  }
+
+  .v2-record-statement {
+    font-size: 16px;
+  }
+}

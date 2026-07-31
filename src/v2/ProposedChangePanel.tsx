@@ -32,7 +32,10 @@ export function ProposedChangePanel() {
           {DATA.UNCERTAINTY.heading}
         </h3>
         <div className="v2-uncertainty-row">
-          <span className="v2-fact-label">Venue access status</span>
+          {/* Literal casing: this label is asserted verbatim in the markup by
+              the spike vocabulary test. CSS uppercases either way, so the
+              rendering is unchanged. */}
+          <span className="v2-fact-label">VENUE ACCESS STATUS</span>
           <span className="v2-uncertainty-value">
             {DATA.UNCERTAINTY.venueAccessStatus}
           </span>
