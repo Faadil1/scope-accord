@@ -1,4 +1,11 @@
-# Day 14 Claude Technical Spike
+# Scope Accord
+
+Scope Accord is a five-state interaction prototype that keeps a proposed
+scope change outside the current agreement until both parties express the
+same understanding of its impact.
+
+> A proposed change stays outside the agreement until both sides mean the same
+> thing.
 
 This is a clean implementation of the SAFE — The Structural Grid spike, implementing two states of the visual contract:
 
