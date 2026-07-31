@@ -3,6 +3,7 @@ import type { ContentRatio } from "../day14Types";
 import * as DATA from "../day14Data";
 import "./v2.css";
 
+/* Sections are not implemented, so the rail is presentational only. */
 const NAV_SECTIONS = [
   "Agreement",
   "Changes",
@@ -12,6 +13,14 @@ const NAV_SECTIONS = [
 ] as const;
 
 const ACTIVE_SECTION = "Changes";
+
+/* The commitment register reuses the existing scope string; nothing new is
+   introduced, the items are only given their own lines. */
+const SCOPE_ITEMS = DATA.CURRENT_AGREEMENT.scope.split(", ");
+
+/* Emphasis derived from each statement. Never replaces the statement. */
+const PROVIDER_EMPHASIS = "Additional service";
+const CLIENT_EMPHASIS = "Included in current package";
 
 function LockMark() {
   return (
@@ -31,21 +40,32 @@ function LockMark() {
   );
 }
 
-function LedgerRow({
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="v2-fact">
+      <span className="v2-fact-label">{label}</span>
+      <span className="v2-fact-value">{value}</span>
+    </div>
+  );
+}
+
+function Interpretation({
+  testId,
   label,
-  value,
-  figure = false,
+  emphasis,
+  statement,
 }: {
+  testId: string;
   label: string;
-  value: string;
-  figure?: boolean;
+  emphasis: string;
+  statement: string;
 }) {
   return (
-    <div className="v2-ledger-row">
-      <span className="v2-ledger-label">{label}</span>
-      <span className={figure ? "v2-ledger-value v2-figure" : "v2-ledger-value"}>
-        {value}
-      </span>
+    <div className="understanding-column" data-testid={testId}>
+      <h3 className="understanding-label">{label}</h3>
+      <div className="difference-tick" />
+      <p className="v2-emphasis">{emphasis}</p>
+      <p className="understanding-text">{statement}</p>
     </div>
   );
 }
@@ -64,10 +84,15 @@ export function DifferentUnderstandingsV2({
   return (
     <div className="v2-shell" data-testid="state-different_understandings">
       <header className="v2-topbar">
-        <h1 className="v2-brand">Scope Accord</h1>
+        <div className="v2-identity">
+          <h1 className="v2-brand">Scope Accord</h1>
+          <span className="v2-brand-rule" aria-hidden="true" />
+        </div>
         <div className="v2-context">
-          <span>{DATA.CURRENT_AGREEMENT.project}</span>
-          <span className="v2-context-rule" aria-hidden="true" />
+          <span className="v2-context-project">
+            {DATA.CURRENT_AGREEMENT.project}
+          </span>
+          <span className="v2-context-dot" aria-hidden="true" />
           <span className="v2-context-change">Change 01</span>
         </div>
         <div className="v2-utilities">
@@ -84,54 +109,70 @@ export function DifferentUnderstandingsV2({
 
       <div className="v2-body">
         <nav className="v2-nav" aria-label="Project sections">
-          <ul className="v2-nav-list">
-            {NAV_SECTIONS.map((section) => (
-              <li
-                key={section}
-                className="v2-nav-item"
-                {...(section === ACTIVE_SECTION
-                  ? { "aria-current": "true" as const }
-                  : {})}
-              >
-                {section}
-              </li>
-            ))}
-          </ul>
+          <ol className="v2-nav-list">
+            {NAV_SECTIONS.map((section, index) => {
+              const active = section === ACTIVE_SECTION;
+              return (
+                <li
+                  key={section}
+                  className={
+                    active ? "v2-nav-item v2-nav-item-active" : "v2-nav-item"
+                  }
+                  {...(active ? { "aria-current": "true" as const } : {})}
+                >
+                  <span className="v2-nav-index" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="v2-nav-label">{section}</span>
+                </li>
+              );
+            })}
+          </ol>
         </nav>
 
         <main className="v2-main">
           {/* The proposal is a real DOM sibling of the agreement, never a child. */}
           <div className="v2-canvas">
             <section className="v2-agreement" data-testid="agreement-section">
-              <h2 className="v2-region-label">Current Agreement</h2>
-              <div className="v2-agreement-foundations">
+              <div className="v2-doc-head">
+                <h2 className="v2-eyebrow">Current Agreement</h2>
                 <p className="v2-doc-title">{DATA.CURRENT_AGREEMENT.project}</p>
-                <div className="v2-foundation-meta">
-                  <span>{DATA.CURRENT_AGREEMENT.venue}</span>
-                </div>
+                <p className="v2-doc-sub">{DATA.CURRENT_AGREEMENT.venue}</p>
               </div>
-              <div className="v2-ledger">
+
+              <div className="v2-facts">
                 {items.includes("COST") && (
-                  <LedgerRow
-                    label="Cost"
-                    value={DATA.CURRENT_AGREEMENT.cost}
-                    figure
-                  />
+                  <Fact label="Cost" value={DATA.CURRENT_AGREEMENT.cost} />
                 )}
                 {items.includes("DATE") && (
-                  <LedgerRow
-                    label="Date"
-                    value={DATA.CURRENT_AGREEMENT.date}
-                    figure
-                  />
-                )}
-                {items.includes("SCOPE") && (
-                  <LedgerRow label="Scope" value={DATA.CURRENT_AGREEMENT.scope} />
+                  <Fact label="Date" value={DATA.CURRENT_AGREEMENT.date} />
                 )}
                 {items.includes("VENUE") && (
-                  <LedgerRow label="Venue" value={DATA.CURRENT_AGREEMENT.venue} />
+                  <Fact label="Venue" value={DATA.CURRENT_AGREEMENT.venue} />
                 )}
               </div>
+
+              {items.includes("SCOPE") && (
+                <div className="v2-register">
+                  <h3 className="v2-eyebrow v2-eyebrow-quiet">Included scope</h3>
+                  <ol className="v2-register-list">
+                    {SCOPE_ITEMS.map((item, index) => (
+                      <li className="v2-register-item" key={item}>
+                        <span className="v2-register-index" aria-hidden="true">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <span className="v2-register-text">{item}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+
+              <p className="v2-folio" aria-hidden="true">
+                <span>Agreement</span>
+                <span className="v2-folio-rule" />
+                <span className="v2-folio-index">01</span>
+              </p>
             </section>
 
             <div className="v2-rail">
@@ -146,32 +187,39 @@ export function DifferentUnderstandingsV2({
             </div>
 
             <section className="v2-proposal" data-testid="proposal-band">
-              <h2 className="v2-region-label">Proposed Change</h2>
-              <div className="v2-proposal-head">
+              <div className="v2-doc-head">
+                <h2 className="v2-eyebrow v2-eyebrow-signal">Proposed Change</h2>
                 <p className="v2-doc-title">{DATA.REQUEST.title}</p>
               </div>
-              <div className="v2-ledger">
-                <LedgerRow
-                  label="Cost"
-                  value={DATA.EXPECTED_IMPACT.cost}
-                  figure
-                />
-                <LedgerRow
-                  label="Venue access"
-                  value={DATA.EXPECTED_IMPACT.venueAccess}
-                  figure
-                />
-                <LedgerRow
-                  label="Dependency"
-                  value={DATA.EXPECTED_IMPACT.documentsAffected}
-                />
-              </div>
-              <div className="v2-uncertainty">
-                <h3 className="v2-region-label">{DATA.UNCERTAINTY.heading}</h3>
-                <div className="v2-uncertainty-row">
-                  <span className="v2-uncertainty-label">
-                    Venue access status
+
+              <div className="v2-impact-figures">
+                <div className="v2-impact-figure">
+                  <span className="v2-fact-label">Cost</span>
+                  <span className="v2-figure-lg">
+                    {DATA.EXPECTED_IMPACT.cost}
                   </span>
+                </div>
+                <div className="v2-impact-figure">
+                  <span className="v2-fact-label">Venue access</span>
+                  <span className="v2-figure-lg">
+                    {DATA.EXPECTED_IMPACT.venueAccess}
+                  </span>
+                </div>
+              </div>
+
+              <div className="v2-impact-note">
+                <span className="v2-fact-label">Dependency</span>
+                <span className="v2-impact-note-value">
+                  {DATA.EXPECTED_IMPACT.documentsAffected}
+                </span>
+              </div>
+
+              <div className="v2-uncertainty">
+                <h3 className="v2-eyebrow v2-eyebrow-signal">
+                  {DATA.UNCERTAINTY.heading}
+                </h3>
+                <div className="v2-uncertainty-row">
+                  <span className="v2-fact-label">Venue access status</span>
                   <span className="v2-uncertainty-value">
                     {DATA.UNCERTAINTY.venueAccessStatus}
                   </span>
@@ -182,49 +230,34 @@ export function DifferentUnderstandingsV2({
 
           <section className="v2-comparison">
             <div className="v2-comparison-head">
-              <h2 className="v2-region-label">Expressed Understandings</h2>
+              <h2 className="v2-eyebrow">Expressed Understandings</h2>
+              <p className="v2-annotation" aria-hidden="true">
+                <span>Same request</span>
+                <span className="v2-annotation-break" />
+                <span>Different meaning</span>
+              </p>
             </div>
             <p className="v2-comparison-note">
               The two expressions below do not describe the same impact.
             </p>
             <div className="understanding-pair" data-testid="understanding-pair">
-              <div
-                className="understanding-column"
-                data-testid="provider-understanding"
-              >
-                <h3 className="understanding-label">
-                  {DATA.PROVIDER_UNDERSTANDING.heading}
-                </h3>
-                <div className="difference-tick" />
-                <p className="understanding-text">
-                  {DATA.PROVIDER_UNDERSTANDING.text}
-                </p>
-              </div>
+              <Interpretation
+                testId="provider-understanding"
+                label={DATA.PROVIDER_UNDERSTANDING.heading}
+                emphasis={PROVIDER_EMPHASIS}
+                statement={DATA.PROVIDER_UNDERSTANDING.text}
+              />
               <div className="understanding-divider" />
-              <div
-                className="understanding-column"
-                data-testid="client-understanding"
-              >
-                <h3 className="understanding-label">CLIENT UNDERSTANDING</h3>
-                <div className="difference-tick" />
-                <p className="understanding-text">
-                  {DATA.CLIENT_UNDERSTANDING_DIFFERENT.text}
-                </p>
-              </div>
+              <Interpretation
+                testId="client-understanding"
+                label="CLIENT UNDERSTANDING"
+                emphasis={CLIENT_EMPHASIS}
+                statement={DATA.CLIENT_UNDERSTANDING_DIFFERENT.text}
+              />
             </div>
           </section>
 
-          <footer className="v2-footer">
-            {stateLine}
-            <div className="v2-actions">
-              <button type="button" className="v2-action v2-action-primary">
-                Request clarification
-              </button>
-              <button type="button" className="v2-action">
-                Add conversation
-              </button>
-            </div>
-          </footer>
+          <footer className="v2-footer">{stateLine}</footer>
         </main>
       </div>
     </div>

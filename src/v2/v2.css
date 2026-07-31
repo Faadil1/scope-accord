@@ -1,6 +1,6 @@
 /* ============================================================
-   SCOPE ACCORD V2 — TOKEN LAYER
-   Phase 1: different_understandings only.
+   SCOPE ACCORD V2.1 — TOKEN LAYER
+   Phase 1 scope: different_understandings only.
    ============================================================ */
 
 :root {
@@ -17,9 +17,8 @@
   --v2-quiet-light: rgba(241, 234, 223, 0.62);
   --v2-quiet-dark: rgba(25, 23, 20, 0.6);
 
-  /* Contrast-safe text variants of the quiet tokens.
-     The base quiet tokens sit below 4.5:1 for body text, so they are used
-     for hairlines and ornament while these carry small text. */
+  /* Contrast-safe text variants. The base quiet tokens sit below 4.5:1 for
+     body text, so they carry hairlines and ornament while these carry text. */
   --v2-quiet-light-aa: rgba(241, 234, 223, 0.78);
   --v2-quiet-dark-aa: rgba(25, 23, 20, 0.76);
 
@@ -31,6 +30,8 @@
   /* Lines */
   --v2-line-light: rgba(241, 234, 223, 0.18);
   --v2-line-dark: rgba(25, 23, 20, 0.18);
+  --v2-line-dark-soft: rgba(25, 23, 20, 0.055);
+  --v2-line-light-soft: rgba(241, 234, 223, 0.05);
 
   /* Type */
   --v2-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
@@ -61,80 +62,121 @@
   flex-direction: column;
 }
 
+/* Shared eyebrow: the one label style across every region. */
+.v2-eyebrow {
+  font-family: var(--v2-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--v2-quiet-light-aa);
+  margin: 0;
+}
+
+.v2-eyebrow-signal {
+  color: var(--v2-amber);
+}
+
+.v2-eyebrow-quiet {
+  color: var(--v2-quiet-dark-aa);
+}
+
+/* Eyebrows inside the paper region invert to dark ink. */
+.v2-agreement .v2-eyebrow {
+  color: var(--v2-quiet-dark-aa);
+}
+
 /* ---------- Top bar ---------- */
 
 .v2-topbar {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 0 24px;
-  min-height: 56px;
+  gap: 18px;
+  padding: 0 22px;
+  min-height: 54px;
   background: var(--v2-panel-dark);
   border-bottom: 1px solid var(--v2-line-light);
   flex-wrap: wrap;
 }
 
+.v2-identity {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
 .v2-brand {
   font-family: var(--v2-serif);
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.005em;
+  line-height: 1;
   margin: 0;
   color: var(--v2-ink-light);
   white-space: nowrap;
 }
 
+.v2-brand-rule {
+  width: 2px;
+  height: 20px;
+  background: var(--v2-rust);
+  flex: none;
+}
+
 .v2-context {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
   font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--v2-quiet-light-aa);
 }
 
-.v2-context-rule {
-  display: inline-block;
-  width: 1px;
-  height: 12px;
-  background: var(--v2-line-light);
+.v2-context-project {
+  letter-spacing: 0.02em;
+}
+
+.v2-context-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--v2-quiet-light);
   flex: none;
 }
 
 .v2-context-change {
   font-family: var(--v2-mono);
-  color: var(--v2-amber);
+  font-size: 11px;
   letter-spacing: 0.04em;
+  color: var(--v2-quiet-light-aa);
 }
 
 .v2-utilities {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
+/* Quiet by default so it does not compete with the product identity. */
 .v2-shell .control-button.v2-utility {
   font-family: var(--v2-sans);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   min-height: 44px;
-  padding: 10px 16px;
+  padding: 8px 12px;
   border-radius: var(--v2-radius);
-  border: 1px solid var(--v2-line-light);
+  border: 1px solid transparent;
   background: transparent;
-  color: var(--v2-quiet-light-aa);
+  color: var(--v2-quiet-light);
   transition: color var(--v2-motion) var(--v2-ease),
     border-color var(--v2-motion) var(--v2-ease);
 }
 
 .v2-shell .control-button.v2-utility:hover {
   color: var(--v2-ink-light);
-  border-color: var(--v2-quiet-light);
+  border-color: var(--v2-line-light);
   background: transparent;
 }
 
@@ -148,13 +190,13 @@
 .v2-body {
   flex: 1;
   display: grid;
-  grid-template-columns: 176px minmax(0, 1fr);
+  grid-template-columns: 184px minmax(0, 1fr);
   align-items: stretch;
 }
 
 .v2-nav {
   border-right: 1px solid var(--v2-line-light);
-  padding: 20px 0;
+  padding: 22px 0;
   background: var(--v2-panel-dark);
 }
 
@@ -165,35 +207,54 @@
 }
 
 .v2-nav-item {
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  color: var(--v2-quiet-light-aa);
-  padding: 11px 20px;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 20px;
   border-left: 2px solid transparent;
 }
 
-.v2-nav-item[aria-current] {
-  color: var(--v2-ink-light);
+.v2-nav-index {
+  font-family: var(--v2-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--v2-quiet-light);
+}
+
+.v2-nav-label {
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  color: var(--v2-quiet-light-aa);
+}
+
+.v2-nav-item-active {
   border-left-color: var(--v2-rust);
   background: var(--v2-panel-dark-raised);
 }
 
-.v2-main {
-  min-width: 0;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.v2-nav-item-active .v2-nav-label {
+  color: var(--v2-ink-light);
+  font-weight: 600;
 }
 
-/* The canvas takes the free height so the page has no dead band above the
-   footer; leftover space reads as document page area. */
+.v2-nav-item-active .v2-nav-index {
+  color: var(--v2-amber);
+}
+
+.v2-main {
+  min-width: 0;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* The canvas absorbs free height so the rail stays full document height and
+   no dead band forms above the conclusion. */
 @media (min-width: 768px) {
   .v2-main {
     display: grid;
-    /* The canvas absorbs the free height: it keeps the boundary rail at full
-       document height and leaves no dead band above the footer. The
-       min-content floor keeps taller fixtures from being squeezed. */
     grid-template-rows: minmax(min-content, 1fr) auto auto;
   }
 }
@@ -204,24 +265,25 @@
 
 .v2-canvas {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 72px minmax(0, 1fr);
   align-items: stretch;
 }
 
-.v2-region-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  margin: 0 0 14px 0;
+.v2-doc-head {
+  padding-bottom: 14px;
 }
 
 .v2-doc-title {
   font-family: var(--v2-serif);
-  font-size: 25px;
+  font-size: 27px;
   font-weight: 600;
-  line-height: 1.2;
-  margin: 0 0 4px 0;
+  line-height: 1.15;
+  margin: 10px 0 0 0;
+}
+
+.v2-doc-sub {
+  font-size: 13px;
+  margin: 5px 0 0 0;
 }
 
 /* ---------- Left region: current agreement on warm paper ---------- */
@@ -229,75 +291,131 @@
 .v2-agreement {
   background: var(--v2-paper);
   color: var(--v2-ink-dark);
-  padding: 22px 24px;
+  padding: 20px 24px 16px 24px;
   border-radius: var(--v2-radius) 0 0 var(--v2-radius);
   min-width: 0;
-}
-
-.v2-agreement .v2-region-label {
-  color: var(--v2-quiet-dark-aa);
-}
-
-.v2-agreement-foundations {
-  border-bottom: 1px solid var(--v2-line-dark);
-  padding-bottom: 14px;
-  margin-bottom: 6px;
-}
-
-.v2-foundation-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px 16px;
-  font-size: 12px;
+  flex-direction: column;
+  /* Quiet ruled ground so short content still reads as a document page. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--v2-line-dark-soft) 0,
+    var(--v2-line-dark-soft) 1px,
+    transparent 1px,
+    transparent 32px
+  );
+  background-position: 0 96px;
+}
+
+.v2-agreement .v2-doc-head {
+  border-bottom: 2px solid var(--v2-ink-dark);
+}
+
+.v2-agreement .v2-doc-sub {
   color: var(--v2-quiet-dark-aa);
-  letter-spacing: 0.03em;
 }
 
-.v2-foundation-meta span {
-  white-space: nowrap;
-}
-
-/* ---------- Commitment ledger ---------- */
-
-.v2-ledger {
-  display: block;
-}
-
-.v2-ledger-row {
+/* Compact facts band */
+.v2-facts {
   display: grid;
-  grid-template-columns: 128px minmax(0, 1fr);
-  gap: 4px 16px;
-  align-items: baseline;
-  padding: 11px 0;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   border-bottom: 1px solid var(--v2-line-dark);
 }
 
-.v2-ledger-row:last-child {
-  border-bottom: none;
+.v2-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 13px 16px 13px 0;
+  border-right: 1px solid var(--v2-line-dark);
 }
 
-.v2-ledger-label {
-  font-size: 10px;
+.v2-fact:last-child {
+  border-right: none;
+}
+
+.v2-facts .v2-fact + .v2-fact {
+  padding-left: 16px;
+}
+
+.v2-fact-label {
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--v2-quiet-dark-aa);
 }
 
-.v2-ledger-value {
-  font-size: 14px;
-  line-height: 1.45;
+.v2-fact-value {
+  font-family: var(--v2-mono);
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
   color: var(--v2-ink-dark);
 }
 
-.v2-ledger-value.v2-figure {
-  font-family: var(--v2-mono);
-  font-size: 16px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
+/* Commitment register */
+.v2-register {
+  padding-top: 15px;
 }
 
-/* ---------- Boundary rail ---------- */
+.v2-register-list {
+  list-style: none;
+  margin: 11px 0 0 0;
+  padding: 0;
+}
+
+.v2-register-item {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--v2-line-dark);
+}
+
+.v2-register-item:first-child {
+  border-top: 1px solid var(--v2-line-dark);
+}
+
+.v2-register-index {
+  font-family: var(--v2-mono);
+  font-size: 11px;
+  color: var(--v2-quiet-dark-aa);
+}
+
+.v2-register-text {
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--v2-ink-dark);
+}
+
+/* Folio marker anchors the page base. */
+.v2-folio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: auto 0 0 0;
+  padding-top: 18px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--v2-quiet-dark-aa);
+}
+
+.v2-folio-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--v2-line-dark);
+}
+
+.v2-folio-index {
+  font-family: var(--v2-mono);
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Boundary rail — the gate between two spaces ---------- */
 
 .v2-rail {
   position: relative;
@@ -305,19 +423,40 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 16px;
   background: linear-gradient(
     to right,
     rgba(154, 62, 38, 0) 0%,
-    rgba(154, 62, 38, 0.16) 45%,
-    rgba(154, 62, 38, 0.16) 55%,
+    rgba(154, 62, 38, 0.1) 32%,
+    rgba(196, 129, 47, 0.16) 50%,
+    rgba(154, 62, 38, 0.1) 68%,
     rgba(154, 62, 38, 0) 100%
   );
   transition: background var(--v2-motion-slow) var(--v2-ease);
 }
 
-/* The structural line. Height is driven by the stretched grid row, which is
-   what keeps it spanning the taller of the two regions. */
+/* Terminal markers close the gate at both ends. */
+.v2-rail::before,
+.v2-rail::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 2px;
+  background: var(--v2-rust);
+}
+
+.v2-rail::before {
+  top: 0;
+}
+
+.v2-rail::after {
+  bottom: 0;
+}
+
+/* The structural line. Height comes from the stretched grid row, which is what
+   keeps it spanning the taller of the two regions. */
 .v2-shell .agreement-boundary {
   position: absolute;
   top: 0;
@@ -329,13 +468,14 @@
   margin: 0;
   background: linear-gradient(
     to bottom,
-    rgba(154, 62, 38, 0.35) 0%,
-    var(--v2-rust) 12%,
+    rgba(154, 62, 38, 0.4) 0%,
+    var(--v2-rust) 14%,
     var(--v2-amber) 50%,
-    var(--v2-rust) 88%,
-    rgba(154, 62, 38, 0.35) 100%
+    var(--v2-rust) 86%,
+    rgba(154, 62, 38, 0.4) 100%
   );
-  box-shadow: 0 0 12px rgba(196, 129, 47, 0.45);
+  /* Controlled inner glow, not a neon halo. */
+  box-shadow: 0 0 6px rgba(196, 129, 47, 0.34);
 }
 
 .v2-rail-label,
@@ -349,12 +489,12 @@
   writing-mode: vertical-rl;
   text-orientation: mixed;
   transform: rotate(180deg);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--v2-amber);
-  padding: 14px 3px;
+  padding: 16px 4px;
   white-space: nowrap;
 }
 
@@ -362,8 +502,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border: 1px solid var(--v2-rust);
   border-radius: var(--v2-radius);
   color: var(--v2-amber);
@@ -381,102 +521,156 @@
   border: 1px solid var(--v2-line-light);
   border-left: none;
   color: var(--v2-ink-light);
-  padding: 22px 24px;
+  padding: 20px 24px 16px 24px;
   border-radius: 0 var(--v2-radius) var(--v2-radius) 0;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  /* Matching ruled ground so the panel base reads as document page, not a void. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--v2-line-light-soft) 0,
+    var(--v2-line-light-soft) 1px,
+    transparent 1px,
+    transparent 32px
+  );
+  background-position: 0 96px;
 }
 
-.v2-proposal .v2-region-label {
-  color: var(--v2-amber);
+.v2-proposal .v2-doc-head {
+  border-bottom: 2px solid var(--v2-line-light);
 }
 
-.v2-proposal .v2-doc-title {
-  color: var(--v2-ink-light);
-}
-
-.v2-proposal-head {
+/* Two dominant numeric impacts */
+.v2-impact-figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   border-bottom: 1px solid var(--v2-line-light);
-  padding-bottom: 14px;
-  margin-bottom: 6px;
 }
 
-.v2-proposal .v2-ledger-row {
-  border-bottom: 1px solid var(--v2-line-light);
+.v2-impact-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 16px 16px 0;
 }
 
-.v2-proposal .v2-ledger-label {
+.v2-impact-figure + .v2-impact-figure {
+  padding-left: 18px;
+  border-left: 1px solid var(--v2-line-light);
+}
+
+.v2-proposal .v2-fact-label {
   color: var(--v2-quiet-light-aa);
 }
 
-.v2-proposal .v2-ledger-value {
+.v2-figure-lg {
+  font-family: var(--v2-mono);
+  font-size: 30px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--v2-amber);
+}
+
+.v2-impact-note {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--v2-line-light);
+}
+
+.v2-impact-note-value {
+  font-size: 15px;
+  line-height: 1.4;
   color: var(--v2-ink-light);
 }
 
-.v2-proposal .v2-figure {
-  color: var(--v2-amber);
-}
-
-/* Uncertainty stays a separate block, not an impact line. */
+/* Uncertainty stays a separate section, not an impact line. */
 .v2-uncertainty {
-  margin-top: 14px;
-  border: 1px solid rgba(196, 129, 47, 0.32);
+  margin: auto 0 0 0;
+  border: 1px solid rgba(196, 129, 47, 0.3);
   border-left: 2px solid var(--v2-amber);
   border-radius: var(--v2-radius);
   background: var(--v2-panel-dark-raised);
-  padding: 12px 14px;
-}
-
-.v2-uncertainty .v2-region-label {
-  margin-bottom: 8px;
-  color: var(--v2-amber);
+  padding: 13px 15px;
 }
 
 .v2-uncertainty-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  align-items: baseline;
-}
-
-.v2-uncertainty-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--v2-quiet-light-aa);
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 9px;
 }
 
 .v2-uncertainty-value {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--v2-ink-light);
 }
 
 /* ============================================================
-   UNDERSTANDING COMPARISON
-   Layout geometry stays governed by the base .understanding-pair
-   rules so the tested breakpoints are unchanged.
+   DIVERGENCE — the second major moment
+   Layout geometry stays governed by the base .understanding-pair rules
+   so the tested breakpoints are unchanged.
    ============================================================ */
 
 .v2-comparison {
   border-top: 1px solid var(--v2-line-light);
-  padding-top: 18px;
+  padding-top: 16px;
 }
 
 .v2-comparison-head {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
-.v2-comparison .v2-region-label {
-  color: var(--v2-quiet-light-aa);
+/* Editorial annotation, not a verdict. */
+.v2-annotation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--v2-quiet-light);
+}
+
+.v2-annotation-break {
+  position: relative;
+  width: 16px;
+  height: 7px;
+  flex: none;
+}
+
+/* Geometric "not equal": two rules with a break through them. */
+.v2-annotation-break::before,
+.v2-annotation-break::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--v2-quiet-light);
+}
+
+.v2-annotation-break::before {
+  top: 0;
+}
+
+.v2-annotation-break::after {
+  bottom: 0;
 }
 
 .v2-comparison-note {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--v2-quiet-light-aa);
-  margin: 0 0 14px 0;
+  margin: 9px 0 14px 0;
 }
 
 .v2-shell .understanding-pair {
@@ -484,94 +678,124 @@
 }
 
 .v2-shell .understanding-column {
-  padding: 0 24px;
+  padding: 0 26px;
   background: transparent;
   border-top: none;
 }
 
 .v2-shell .understanding-column:first-child {
   padding-left: 0;
-  padding-right: 24px;
+  padding-right: 26px;
 }
 
 .v2-shell .understanding-column:last-child {
-  padding-left: 24px;
+  padding-left: 26px;
   padding-right: 0;
 }
 
 .v2-shell .understanding-label {
   font-family: var(--v2-sans);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--v2-quiet-light-aa);
-  margin: 0 0 10px 0;
-  padding-left: 30px;
+  margin: 0 0 12px 0;
+  padding-left: 32px;
+}
+
+/* Emphasis pull-out; never replaces the statement below it. */
+.v2-emphasis {
+  font-family: var(--v2-serif);
+  font-size: 20px;
+  line-height: 1.25;
+  color: var(--v2-ink-light);
+  margin: 0 0 7px 0;
+  padding-left: 32px;
 }
 
 .v2-shell .understanding-text {
   font-size: 15px;
   line-height: 1.5;
-  color: var(--v2-ink-light);
+  color: var(--v2-quiet-light-aa);
   margin: 0;
-  padding-left: 30px;
+  padding-left: 32px;
 }
 
 .v2-shell .difference-tick {
-  top: 0.35em;
-  width: 20px;
+  top: 0.3em;
+  width: 22px;
   height: 2px;
   background: var(--v2-rust);
 }
 
 .v2-shell .understanding-column:last-child .difference-tick {
-  left: 24px;
+  left: 26px;
 }
 
-/* Central difference marker sits on the divider. */
+/* Divergence spine */
 .v2-shell .understanding-divider {
   position: relative;
   width: 2px;
-  background: var(--v2-line-light);
+  background: linear-gradient(
+    to bottom,
+    rgba(241, 234, 223, 0) 0%,
+    var(--v2-line-light) 18%,
+    var(--v2-line-light) 82%,
+    rgba(241, 234, 223, 0) 100%
+  );
 }
 
+/* A geometric break in the spine: equal rules, cut through. */
 .v2-shell .understanding-divider::before {
   content: "";
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 10px;
-  height: 10px;
-  transform: translate(-50%, -50%) rotate(45deg);
+  width: 15px;
+  height: 9px;
+  transform: translate(-50%, -50%);
   background: var(--v2-shell);
-  border: 2px solid var(--v2-rust);
+  border-top: 2px solid var(--v2-rust);
+  border-bottom: 2px solid var(--v2-rust);
+}
+
+.v2-shell .understanding-divider::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 22px;
+  transform: translate(-50%, -50%) rotate(32deg);
+  background: var(--v2-amber);
 }
 
 /* ============================================================
-   STATE FOOTER
+   STATE CONCLUSION
    ============================================================ */
 
 .v2-footer {
-  border-top: 1px solid var(--v2-line-light);
-  padding-top: 16px;
+  border-top: 2px solid var(--v2-rust);
+  background: var(--v2-panel-dark);
+  border-radius: 0 0 var(--v2-radius) var(--v2-radius);
+  padding: 15px 20px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
 }
 
 .v2-shell .state-line {
   margin: 0;
   max-width: none;
   font-family: var(--v2-sans);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.13em;
+  line-height: 1.5;
   text-transform: uppercase;
-  color: var(--v2-quiet-light-aa);
+  color: var(--v2-ink-light);
   min-width: 0;
-  flex: 1 1 320px;
+  gap: 16px;
 }
 
 .v2-shell .state-line:focus-visible {
@@ -580,52 +804,9 @@
 }
 
 .v2-shell .state-tick {
-  background: var(--v2-rust);
-}
-
-.v2-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.v2-action {
-  font-family: var(--v2-sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  min-height: 44px;
-  padding: 12px 18px;
-  border-radius: var(--v2-radius);
-  border: 1px solid var(--v2-line-light);
-  background: transparent;
-  color: var(--v2-quiet-light-aa);
-  cursor: pointer;
-  transition: color var(--v2-motion) var(--v2-ease),
-    border-color var(--v2-motion) var(--v2-ease),
-    background-color var(--v2-motion) var(--v2-ease);
-}
-
-.v2-action:hover {
-  color: var(--v2-ink-light);
-  border-color: var(--v2-quiet-light);
-}
-
-.v2-action:focus-visible {
-  outline: 2px solid var(--v2-amber);
-  outline-offset: 2px;
-}
-
-.v2-action-primary {
-  border-color: var(--v2-rust);
-  color: var(--v2-ink-light);
-  background: rgba(154, 62, 38, 0.22);
-}
-
-.v2-action-primary:hover {
-  background: rgba(154, 62, 38, 0.34);
-  border-color: var(--v2-amber);
+  width: 28px;
+  height: 2px;
+  background: var(--v2-amber);
 }
 
 /* ============================================================
@@ -635,11 +816,11 @@
 
 @media (max-width: 1023px) {
   .v2-body {
-    grid-template-columns: 148px minmax(0, 1fr);
+    grid-template-columns: 156px minmax(0, 1fr);
   }
 
   .v2-canvas {
-    grid-template-columns: minmax(0, 1fr) 52px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 58px minmax(0, 1fr);
   }
 
   .v2-shell .understanding-column,
@@ -650,13 +831,44 @@
 
   .v2-shell .understanding-column:last-child {
     margin-top: 18px;
-    padding-top: 18px;
+    padding-top: 20px;
     border-top: 1px solid var(--v2-line-light);
   }
 
   .v2-shell .understanding-column:last-child .difference-tick {
     left: 0;
-    top: calc(18px + 0.35em);
+    top: calc(20px + 0.3em);
+  }
+
+  /* The spine is hidden when stacked, so the break moves to the seam. */
+  .v2-shell .understanding-column:last-child::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -5px;
+    width: 15px;
+    height: 9px;
+    background: var(--v2-shell);
+    border-top: 2px solid var(--v2-rust);
+    border-bottom: 2px solid var(--v2-rust);
+  }
+}
+
+/* Between 768 and 1180 the panels are too narrow for two figures side by
+   side, so the dominant impacts stack rather than shrink or wrap. */
+@media (min-width: 768px) and (max-width: 1180px) {
+  .v2-impact-figures {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .v2-impact-figure {
+    padding-right: 0;
+  }
+
+  .v2-impact-figure + .v2-impact-figure {
+    padding-left: 0;
+    border-left: none;
+    border-top: 1px solid var(--v2-line-light);
   }
 }
 
@@ -665,22 +877,37 @@
    ============================================================ */
 
 @media (max-width: 767px) {
+  /* Two-level top bar: identity + reset, then context metadata. */
   .v2-topbar {
-    padding: 10px 16px;
-    gap: 10px 14px;
+    padding: 7px 14px 8px 14px;
+    gap: 5px 12px;
+    min-height: 0;
   }
 
-  .v2-brand {
-    font-size: 17px;
+  .v2-identity {
+    order: 1;
+    gap: 14px;
+  }
+
+  .v2-utilities {
+    order: 2;
+    margin-left: auto;
   }
 
   .v2-context {
+    order: 3;
+    width: 100%;
     font-size: 11px;
     gap: 8px;
   }
 
-  .v2-utilities {
-    margin-left: auto;
+  .v2-brand {
+    font-size: 18px;
+  }
+
+  .v2-shell .control-button.v2-utility {
+    padding: 8px 10px;
+    font-size: 11px;
   }
 
   /* The rail is the product on mobile; the section list is not. */
@@ -693,8 +920,8 @@
   }
 
   .v2-main {
-    padding: 16px;
-    gap: 16px;
+    padding: 12px;
+    gap: 9px;
   }
 
   .v2-canvas {
@@ -703,7 +930,7 @@
 
   .v2-agreement,
   .v2-proposal {
-    padding: 16px;
+    padding: 14px;
     border-radius: var(--v2-radius);
   }
 
@@ -712,13 +939,72 @@
   }
 
   .v2-doc-title {
-    font-size: 21px;
+    font-size: 22px;
+    margin-top: 6px;
   }
 
-  .v2-ledger-row {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2px;
-    padding: 9px 0;
+  .v2-doc-head {
+    padding-bottom: 9px;
+  }
+
+  /* Compact two-column facts; scope stays full width. */
+  .v2-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .v2-fact {
+    padding: 9px 12px 9px 0;
+  }
+
+  .v2-facts .v2-fact + .v2-fact {
+    padding-left: 14px;
+  }
+
+  .v2-register {
+    padding-top: 10px;
+  }
+
+  .v2-register-item {
+    padding: 7px 0;
+  }
+
+  .v2-register-text {
+    font-size: 16px;
+  }
+
+  /* Decorative folio is dropped on mobile to save page length. */
+  .v2-folio {
+    display: none;
+  }
+
+  .v2-impact-figures {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .v2-impact-figure {
+    padding: 10px 10px 10px 0;
+  }
+
+  .v2-impact-figure + .v2-impact-figure {
+    padding-left: 12px;
+  }
+
+  .v2-figure-lg {
+    font-size: 23px;
+  }
+
+  .v2-impact-note-value,
+  .v2-uncertainty-value {
+    font-size: 16px;
+  }
+
+  .v2-impact-note {
+    padding: 11px 0;
+  }
+
+  .v2-uncertainty {
+    margin-top: 10px;
+    padding: 11px 13px;
   }
 
   /* Rail turns horizontal and keeps the 2px line as the true boundary. */
@@ -726,14 +1012,32 @@
     flex-direction: row;
     justify-content: center;
     gap: 12px;
-    min-height: 52px;
+    min-height: 46px;
     background: linear-gradient(
       to bottom,
       rgba(154, 62, 38, 0) 0%,
-      rgba(154, 62, 38, 0.16) 45%,
-      rgba(154, 62, 38, 0.16) 55%,
+      rgba(154, 62, 38, 0.1) 32%,
+      rgba(196, 129, 47, 0.16) 50%,
+      rgba(154, 62, 38, 0.1) 68%,
       rgba(154, 62, 38, 0) 100%
     );
+  }
+
+  .v2-rail::before,
+  .v2-rail::after {
+    left: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 18px;
+  }
+
+  .v2-rail::before {
+    left: 0;
+  }
+
+  .v2-rail::after {
+    right: 0;
   }
 
   .v2-shell .agreement-boundary {
@@ -746,11 +1050,11 @@
     height: 2px;
     background: linear-gradient(
       to right,
-      rgba(154, 62, 38, 0.35) 0%,
-      var(--v2-rust) 12%,
+      rgba(154, 62, 38, 0.4) 0%,
+      var(--v2-rust) 14%,
       var(--v2-amber) 50%,
-      var(--v2-rust) 88%,
-      rgba(154, 62, 38, 0.35) 100%
+      var(--v2-rust) 86%,
+      rgba(154, 62, 38, 0.4) 100%
     );
   }
 
@@ -759,28 +1063,58 @@
     text-orientation: initial;
     transform: none;
     padding: 3px 10px;
-    letter-spacing: 0.16em;
+    font-size: 11px;
+    letter-spacing: 0.18em;
   }
 
   .v2-rail-lock {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
   }
 
   .v2-comparison {
-    padding-top: 14px;
+    padding-top: 10px;
+  }
+
+  .v2-comparison-note {
+    font-size: 15px;
+    margin: 6px 0 12px 0;
+  }
+
+  .v2-emphasis {
+    font-size: 19px;
+    padding-left: 30px;
+  }
+
+  .v2-shell .understanding-label {
+    padding-left: 30px;
+  }
+
+  .v2-shell .understanding-text {
+    font-size: 16px;
+    padding-left: 30px;
+  }
+
+  .v2-shell .understanding-column:last-child {
+    margin-top: 12px;
+    padding-top: 15px;
+  }
+
+  .v2-shell .understanding-column:last-child .difference-tick {
+    top: calc(15px + 0.3em);
+  }
+
+  .v2-shell .understanding-column:last-child::before {
+    top: -5px;
   }
 
   .v2-footer {
-    padding-top: 14px;
+    padding: 11px 14px;
+  }
+
+  .v2-shell .state-line {
+    font-size: 11px;
+    letter-spacing: 0.11em;
     gap: 12px;
-  }
-
-  .v2-actions {
-    width: 100%;
-  }
-
-  .v2-action {
-    flex: 1 1 auto;
   }
 }
