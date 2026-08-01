@@ -1616,3 +1616,259 @@
     height: 1px;
   }
 }
+
+
+/* ============================================================
+   V2.5 — SHARED UNDERSTANDING
+   The boundary does not change colour here. It no longer exists.
+   ============================================================ */
+
+.v2-shared {
+  background-color: var(--v2-ivory-paper);
+  border: 1px solid var(--v2-line-soft);
+  border-radius: var(--v2-radius);
+  box-shadow: 0 1px 6px rgba(23, 19, 15, 0.05);
+  min-width: 0;
+  /* Quiet ruled ground, continuous across the whole document. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--v2-rule-ghost-dark) 0,
+    var(--v2-rule-ghost-dark) 1px,
+    transparent 1px,
+    transparent 32px
+  );
+  background-position: 0 96px;
+}
+
+/* One document, two regions, no reserved centre column. */
+.v2-shared-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 66fr) minmax(0, 34fr);
+  align-items: stretch;
+  min-width: 0;
+}
+
+/* The existing agreement drops its panel chrome inside the shared shell. */
+.v2-agreement-integrated {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background-image: none;
+  background-color: transparent;
+}
+
+/* ---------- The integrated change ---------- */
+
+.v2-shared-change {
+  min-width: 0;
+  display: flex;
+}
+
+.v2-integrated {
+  flex: 1;
+  background: var(--v2-ivory-dense);
+  color: var(--v2-ink-dark);
+  border-left: 1px solid var(--v2-line-warm);
+  border-radius: 0 var(--v2-radius) var(--v2-radius) 0;
+  padding: 20px 22px 16px 22px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Paired rules: a record of timing, not a certificate. */
+.v2-integration-provenance {
+  font-family: var(--v2-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--v2-label-dark);
+  margin: 0 0 14px 0;
+  padding: 8px 0;
+  border-top: 1px solid var(--v2-line-warm);
+  border-bottom: 1px solid var(--v2-line-warm);
+  box-shadow: inset 0 3px 0 -2px var(--v2-line-soft),
+    inset 0 -3px 0 -2px var(--v2-line-soft);
+}
+
+.v2-integrated-head {
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--v2-ink-dark);
+}
+
+.v2-integrated-title {
+  font-family: var(--v2-serif);
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 8px 0 0 0;
+  color: var(--v2-ink-dark);
+}
+
+.v2-integrated-figures {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-bottom: 1px solid var(--v2-line-soft);
+}
+
+.v2-integrated-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 0;
+}
+
+.v2-integrated-figure + .v2-integrated-figure {
+  border-top: 1px solid var(--v2-line-soft);
+}
+
+.v2-integrated-amount {
+  font-family: var(--v2-mono);
+  font-size: 24px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--v2-copper-deep);
+  white-space: nowrap;
+}
+
+.v2-integrated-note {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--v2-line-soft);
+}
+
+.v2-integrated-note-value {
+  font-family: var(--v2-sans);
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--v2-ink-dark);
+}
+
+/* The shared understanding did not resolve this. */
+.v2-integrated-uncertainty {
+  margin-top: 14px;
+  border: 1px solid rgba(168, 94, 18, 0.32);
+  border-left: 2px solid var(--v2-copper-deep);
+  border-radius: var(--v2-radius);
+  background: rgba(201, 130, 30, 0.07);
+  padding: 11px 13px;
+}
+
+.v2-integrated-uncertainty-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+/* ---------- Shared understandings: equality, not divergence ---------- */
+
+/* One continuous copper rule connecting both regions. */
+.v2-shell .v2-comparison-shared .understanding-divider {
+  background: linear-gradient(
+    to bottom,
+    rgba(201, 130, 30, 0) 0%,
+    rgba(201, 130, 30, 0.55) 18%,
+    rgba(201, 130, 30, 0.55) 82%,
+    rgba(201, 130, 30, 0) 100%
+  );
+}
+
+/* Centred geometric equals: paired rules only, with no diagonal cut. */
+.v2-shell .v2-comparison-shared .understanding-divider::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 15px;
+  height: 9px;
+  transform: translate(-50%, -50%);
+  background: var(--v2-espresso);
+  border-top: 2px solid var(--v2-copper);
+  border-bottom: 2px solid var(--v2-copper);
+}
+
+.v2-shell .v2-comparison-shared .understanding-divider::after {
+  content: none;
+}
+
+/* No party markers reserve a gutter in this state. */
+.v2-shell .v2-pair-shared .understanding-label,
+.v2-shell .v2-pair-shared .v2-emphasis,
+.v2-shell .v2-pair-shared .understanding-text {
+  padding-left: 0;
+}
+
+/* Stacked: the seam becomes the connecting rule with one equals marker. */
+@media (max-width: 1023px) {
+  .v2-shell .v2-pair-shared .understanding-column:last-child {
+    border-top: 1px solid rgba(201, 130, 30, 0.55);
+  }
+
+  .v2-shell .v2-pair-shared .understanding-column:last-child::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 15px;
+    height: 9px;
+    transform: translate(-50%, -50%);
+    background: var(--v2-espresso);
+    border-top: 2px solid var(--v2-copper);
+    border-bottom: 2px solid var(--v2-copper);
+  }
+
+  .v2-shell .v2-pair-shared .understanding-column:last-child::after {
+    content: none;
+  }
+}
+
+/* ---------- Mobile: one continuous ivory document ---------- */
+
+@media (max-width: 767px) {
+  /* Existing agreement and integrated change flow as one column. */
+  .v2-shared-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .v2-integrated {
+    border-left: none;
+    border-top: 1px solid var(--v2-line-warm);
+    border-radius: 0 0 var(--v2-radius) var(--v2-radius);
+    padding: 16px 14px 14px 14px;
+  }
+
+  .v2-integrated-title {
+    font-size: 21px;
+  }
+
+  .v2-integrated-figures {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .v2-integrated-figure {
+    padding: 11px 10px 11px 0;
+  }
+
+  .v2-integrated-figure + .v2-integrated-figure {
+    border-top: none;
+    border-left: 1px solid var(--v2-line-soft);
+    padding-left: 12px;
+  }
+
+  .v2-integrated-amount {
+    font-size: 21px;
+  }
+
+  .v2-integrated-note-value {
+    font-size: 16px;
+  }
+
+  .v2-integration-provenance {
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+}

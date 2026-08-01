@@ -25,12 +25,33 @@ function Fact({
   );
 }
 
-/** The current agreement as an ivory document page. Presentational only. */
-export function AgreementDocument({ ratio }: { ratio: ContentRatio }) {
+/**
+ * The current agreement as an ivory document page. Presentational only.
+ *
+ * `panel` is the standalone document that sits beside the boundary rail.
+ * `integrated` drops the panel chrome so it can read as one continuous
+ * surface inside the shared agreement shell.
+ */
+export function AgreementDocument({
+  ratio,
+  testId = "agreement-section",
+  variant = "panel",
+}: {
+  ratio: ContentRatio;
+  testId?: string;
+  variant?: "panel" | "integrated";
+}) {
   const items = DATA.AGREEMENT_ITEMS_BY_RATIO[ratio];
 
   return (
-    <section className="v2-agreement" data-testid="agreement-section">
+    <section
+      className={
+        variant === "integrated"
+          ? "v2-agreement v2-agreement-integrated"
+          : "v2-agreement"
+      }
+      data-testid={testId}
+    >
       <div className="v2-doc-head">
         <h2 className="v2-eyebrow">Current Agreement</h2>
         <p className="v2-doc-title">{DATA.CURRENT_AGREEMENT.project}</p>
