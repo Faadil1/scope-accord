@@ -5,11 +5,11 @@ import {
   day14InitialState,
 } from "./day14Reducer";
 import type { Day14State } from "./day14Types";
-import * as DATA from "./day14Data";
 import { DifferentUnderstandingsV2 } from "./v2/DifferentUnderstandingsV2";
 import { ClientReviewUnexpressedV2 } from "./v2/ClientReviewUnexpressedV2";
 import { ProviderCaptureV2 } from "./v2/ProviderCaptureV2";
 import { DeclinedV2 } from "./v2/DeclinedV2";
+import { SharedUnderstandingV2 } from "./v2/SharedUnderstandingV2";
 
 type ContentRatio = "1:1" | "1:3" | "3:1";
 
@@ -54,72 +54,6 @@ function App() {
     return (fixture && ["1:1", "1:3", "3:1"].includes(fixture)) ? fixture : "1:1";
   }, []);
 
-  const renderRow = (
-    label: string,
-    value: string,
-    isMonospace: boolean = false
-  ) => (
-    <div className="impact-row">
-      <div className="impact-row-content">
-        <label className="impact-label">{label}</label>
-        <span className={isMonospace ? "impact-value-mono" : "impact-value"}>
-          {value}
-        </span>
-      </div>
-    </div>
-  );
-
-  const agreementContent = (
-    <>
-      <h3 className="region-heading">CURRENT AGREEMENT</h3>
-      <div className="content-section">
-        {DATA.AGREEMENT_ITEMS_BY_RATIO[ratio].includes("COST") &&
-          renderRow("COST", DATA.CURRENT_AGREEMENT.cost, true)}
-        {DATA.AGREEMENT_ITEMS_BY_RATIO[ratio].includes("DATE") &&
-          renderRow("DATE", DATA.CURRENT_AGREEMENT.date, true)}
-        {DATA.AGREEMENT_ITEMS_BY_RATIO[ratio].includes("SCOPE") &&
-          renderRow("SCOPE", DATA.CURRENT_AGREEMENT.scope, false)}
-        {DATA.AGREEMENT_ITEMS_BY_RATIO[ratio].includes("VENUE") &&
-          renderRow("VENUE", DATA.CURRENT_AGREEMENT.venue, false)}
-      </div>
-    </>
-  );
-
-  const proposalContent = (
-    <>
-      <h3 className="region-heading">PROPOSED CHANGE</h3>
-      <h4 className="proposal-heading">{DATA.REQUEST.title}</h4>
-      <div style={{ marginBottom: "40px" }}>
-        <div className="group-label">{DATA.EXPECTED_IMPACT.heading}</div>
-        <div className="content-section">
-          {renderRow("COST", DATA.EXPECTED_IMPACT.cost, true)}
-          {renderRow("VENUE ACCESS", DATA.EXPECTED_IMPACT.venueAccess, true)}
-          {renderRow(
-            "DOCUMENTS AFFECTED",
-            DATA.EXPECTED_IMPACT.documentsAffected,
-            false
-          )}
-          {DATA.PROPOSAL_ITEMS_BY_RATIO[ratio] >= 2 &&
-            renderRow("IMPACT ITEM", "Additional technical team required", false)}
-          {DATA.PROPOSAL_ITEMS_BY_RATIO[ratio] >= 3 &&
-            renderRow("CAPACITY", "500 per hour", true)}
-          {DATA.PROPOSAL_ITEMS_BY_RATIO[ratio] >= 4 &&
-            renderRow("OVERFLOW 1", "Extra long proposal content", false)}
-        </div>
-      </div>
-      <div>
-        <div className="group-label">{DATA.UNCERTAINTY.heading}</div>
-        <div className="content-section">
-          {renderRow(
-            "VENUE ACCESS STATUS",
-            DATA.UNCERTAINTY.venueAccessStatus,
-            false
-          )}
-        </div>
-      </div>
-    </>
-  );
-
   const getStateText = (): string => {
     switch (state) {
       case "provider_capture":
@@ -129,56 +63,11 @@ function App() {
       case "different_understandings":
         return "UNDERSTANDINGS DIFFER · PROPOSAL REMAINS OUTSIDE THE CURRENT AGREEMENT";
       case "shared_understanding":
-        return "SAME UNDERSTANDING EXPRESSED · PROPOSAL NOW SHOWN IN THE CURRENT AGREEMENT";
+        return "PROPOSED 14 MAR · SAME UNDERSTANDING EXPRESSED 14 MAR · NOW SHOWN IN THE CURRENT AGREEMENT";
       case "declined":
         return "CLIENT DOES NOT WANT TO ADD THIS · PROPOSAL REMAINS OUTSIDE THE CURRENT AGREEMENT";
       default:
         return "";
-    }
-  };
-
-  const sharedUnderstanding = (
-    <div data-testid="state-shared_understanding">
-      <div
-        className="agreement-shell"
-        data-testid="agreement-shell"
-      >
-        <section className="existing-agreement" data-testid="existing-agreement">
-        {agreementContent}
-      </section>
-      <section className="shared-proposal-block" data-testid="shared-proposal-block">
-        <div className="provenance-block" data-testid="provenance-block">
-          {DATA.PROVENANCE.text}
-        </div>
-        {proposalContent}
-        <div className="understanding-pair" data-testid="understanding-pair">
-          <div className="understanding-column" data-testid="provider-understanding">
-            <h5 className="understanding-label">
-              {DATA.PROVIDER_UNDERSTANDING.heading}
-            </h5>
-            <p className="understanding-text">
-              {DATA.PROVIDER_UNDERSTANDING.text}
-            </p>
-          </div>
-          <div className="understanding-divider" />
-          <div className="understanding-column" data-testid="client-understanding">
-            <h5 className="understanding-label">CLIENT UNDERSTANDING</h5>
-            <p className="understanding-text">
-              {DATA.CLIENT_UNDERSTANDING_MATCH.text}
-            </p>
-          </div>
-        </div>
-      </section>
-      </div>
-    </div>
-  );
-
-  const renderState = () => {
-    switch (state) {
-      case "shared_understanding":
-        return sharedUnderstanding;
-      default:
-        return null;
     }
   };
 
@@ -211,6 +100,16 @@ function App() {
       </span>
     </div>
   );
+
+  if (state === "shared_understanding") {
+    return (
+      <SharedUnderstandingV2
+        ratio={ratio}
+        stateLine={stateLine}
+        onReset={() => dispatch({ type: "RESET_DEMO" })}
+      />
+    );
+  }
 
   if (state === "provider_capture") {
     return (
@@ -256,24 +155,8 @@ function App() {
     );
   }
 
-  return (
-    <div className="app-container">
-      <div className="demo-control">
-        <div className="control-label">DEMO CONTROL — NOT PRODUCT UI</div>
-        <button
-          className="control-button"
-          data-testid="reset-demo"
-          onClick={() => dispatch({ type: "RESET_DEMO" })}
-        >
-          RESET DEMO
-        </button>
-      </div>
-
-      {stateLine}
-
-      {renderState()}
-    </div>
-  );
+  // Every product state routes through the V2 system above.
+  return null;
 }
 
 export default App;

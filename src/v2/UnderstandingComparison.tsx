@@ -4,7 +4,7 @@ import * as DATA from "../day14Data";
 const PROVIDER_EMPHASIS = "Additional service";
 const CLIENT_EMPHASIS = "Included in current package";
 
-export type ComparisonVariant = "different" | "unexpressed";
+export type ComparisonVariant = "different" | "unexpressed" | "shared";
 
 function Interpretation({
   testId,
@@ -41,6 +41,7 @@ export function UnderstandingComparison({
   variant: ComparisonVariant;
 }) {
   const isDifferent = variant === "different";
+  const isShared = variant === "shared";
 
   return (
     <section className={`v2-comparison v2-comparison-${variant}`}>
@@ -49,7 +50,7 @@ export function UnderstandingComparison({
             variant, so the heading states status rather than claiming both
             sides have expressed. */}
         <h2 className="v2-eyebrow">
-          {isDifferent ? "Expressed Understandings" : "Understanding Status"}
+          {isDifferent || isShared ? "Expressed Understandings" : "Understanding Status"}
         </h2>
         {isDifferent && (
           <p className="v2-annotation" aria-hidden="true">
@@ -70,7 +71,9 @@ export function UnderstandingComparison({
         className={
           isDifferent
             ? "understanding-pair"
-            : "understanding-pair unexpressed v2-pair-unexpressed"
+            : isShared
+              ? "understanding-pair v2-pair-shared"
+              : "understanding-pair unexpressed v2-pair-unexpressed"
         }
         data-testid="understanding-pair"
       >
@@ -86,8 +89,11 @@ export function UnderstandingComparison({
           className={
             isDifferent
               ? "understanding-divider"
-              : "understanding-divider dashed"
+              : isShared
+                ? "understanding-divider"
+                : "understanding-divider dashed"
           }
+          {...(isShared ? { "aria-hidden": "true" as const } : {})}
         />
 
         {isDifferent ? (
@@ -97,6 +103,14 @@ export function UnderstandingComparison({
             emphasis={CLIENT_EMPHASIS}
             statement={DATA.CLIENT_UNDERSTANDING_DIFFERENT.text}
             showTick
+          />
+        ) : isShared ? (
+          <Interpretation
+            testId="client-understanding"
+            label="CLIENT UNDERSTANDING"
+            emphasis={PROVIDER_EMPHASIS}
+            statement={DATA.CLIENT_UNDERSTANDING_MATCH.text}
+            showTick={false}
           />
         ) : (
           <div
